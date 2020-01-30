@@ -1,0 +1,15 @@
+Package: crispRutils
+Title: Tools for working with CRISPR data.
+Version: 0.1.0
+Authors@R: 
+    person(given = "Alex",
+           family = "Kalinka",
+           role = c("aut", "cre"),
+           email = "alex.kalinka@cancer.org.uk")
+Description: Tools for working with CRISPR data.
+License: MIT + file LICENSE
+Encoding: UTF-8
+LazyData: true
+Imports: 
+    dplyr,
+    ggplot2

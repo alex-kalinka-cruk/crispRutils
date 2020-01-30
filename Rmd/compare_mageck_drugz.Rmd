@@ -1,0 +1,242 @@
+---
+title: "Mageck vs drugZ comparison using `seqgendiff` to add known signal to the data"
+author: "Alex Kalinka"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output:
+  html_document:
+    code_folding: hide
+    depth: 3
+    highlight: tango
+    number_sections: true
+    theme: spacelab
+    toc: true
+    toc_float: true
+---
+
+# Setup
+
+```{r setup, include=FALSE}
+set.seed(1)
+
+options(warn=-1)
+suppressMessages(library(knitr))
+suppressMessages(library(tidyr))
+suppressMessages(library(magrittr))
+suppressMessages(library(ggplot2))
+suppressMessages(library(dplyr))
+suppressMessages(library(seqgendiff))
+
+c903 <- read.table("../data/HT29_c903.tsv", header=T, stringsAsFactors = F)[,c(1:7)] %>%
+  dplye::select(-ERS717283.plasmid)
+
+## Common functions.
+add_drugz_path <- function(){
+  system("export PATH=~/git-projects/drugz:$PATH")
+}
+
+write_data <- function(data){
+  # Write data for Mageck to use.
+  write.table(data, file = "bthin_input.txt", col.names = T, row.names = F, sep="\t")
+}
+
+run_mageck <- function(){
+  cmd <- "mageck test -k bthin_input.txt -t treat.1,treat.2 -c control.1,control.2 -n mageck_out"
+  system(cmd, show.output.on.console = F)
+}
+
+run_drugz <- function(){
+  cmd <- "drugz.py -i bthin_input.txt -c control.1,control.2 -x treat.1,treat.2 -f drugz-out-lfc.txt -o drugz-out.txt -unpaired"
+  system(cmd, show.output.on.console = F)
+}
+
+read_mageck <- function(){
+  return(read.table("mageck_out.gene_summary.txt", header=T, stringsAsFactors = F))
+}
+
+read_drugz <- function(){
+  return(read.table("drugz-out.txt", header=T, stringsAsFactors = F))
+}
+
+# Process output to add expected logFC.
+process_output <- function(lfc, type){
+  if(type == "mageck"){
+    data <- read_mageck()
+    gene_name <- "id"
+    col.1 <- "neg.fdr"
+    col.2 <- "pos.fdr"
+  }else{
+    data <- read_drugz()
+    gene_name <- "GENE"
+    col.1 <- "fdr_synth"
+    col.2 <- "fdr_supp"
+  }
+  ret <- data %>%
+    mutate(lfc_bthin = ifelse(!!sym(gene_name) %in% names(lfc), 
+                              lfc[match(!!sym(gene_name), names(lfc))], 0)) %>%
+    rowwise() %>%
+    mutate(sign.1 = (!!sym(col.1) < 0.1 || !!sym(col.2) < 0.1),
+           # LOD cut-offs for genes to ignore when calculating performance estimates.
+           ignore.1.4 = (abs(lfc_bthin) > 0 && abs(lfc_bthin) < 1.4),
+           ignore.1.2 = (abs(lfc_bthin) > 0 && abs(lfc_bthin) < 1.2),
+           ignore.1 = (abs(lfc_bthin) > 0 && abs(lfc_bthin) < 1),
+           ignore.0.8 = (abs(lfc_bthin) > 0 && abs(lfc_bthin) < 0.8),
+           ignore.0.6 = (abs(lfc_bthin) > 0 && abs(lfc_bthin) < 0.6),
+           ignore.0.4 = (abs(lfc_bthin) > 0 && abs(lfc_bthin) < 0.4),
+           ignore.0.2 = (abs(lfc_bthin) > 0 && abs(lfc_bthin) < 0.2),
+           ignore.0.0 = F,
+           true_neg = lfc_bthin==0, true_pos = abs(lfc_bthin)>0,
+           false_pos = (sign.1 && lfc_bthin==0),
+           false_neg = (!sign.1 && lfc_bthin>0)) %>%
+    ungroup()
+  return(ret)
+}
+
+# Estimate performance.
+estimate_performance <- function(data){
+  pf <- NULL
+  for(i in seq(0,1.4,by=0.2)){
+    pf <- rbind(pf,
+                data %>%
+                  filter(! (!!sym(paste("ignore.",i,sep="")))) %>%
+                  summarise(logFC.LOD = i,
+                            specificity = 1-sum(false_pos)/sum(true_neg),
+                            sensitivity = 1-sum(false_neg)/sum(true_pos))
+    )
+  }
+  return(pf)
+}
+
+# Randomly sample logFC.
+rand_logfc <- function(fun, params, num){
+  # Params expected to be in same order as function definition.
+  return(fun(num, params[[1]], params[[2]]))
+}
+
+# Replicate signal additions.
+repl_signal_add <- function(data, num_reps, num_genes, signal_fun, signal_params){
+  add_drugz_path()
+  # data expected to have plasmid column(s) removed in advance.
+  ret_sig <- NULL
+  ret_perf <- NULL
+  for(i in 1:num_reps){
+    # 1. Randomly sample genes to receive a signal sampled from a particular distribution.
+    lfc <- rand_logfc(signal_fun, signal_params, num_genes)
+    names(lfc) <- sample(unique(data$gene), num_genes, replace=F)
+    
+    # 2. Build coef matrix.
+    coef_mat <- as.matrix(data %>%
+                        dplyr::select(gene) %>%
+                        dplyr::mutate(gene_indicator = ifelse(gene %in% names(lfc),1,0)) %>%
+                        dplyr::group_by(gene) %>%
+                        dplyr::mutate(gene_indicator = ifelse(gene[1] %in% names(lfc),
+                                                              rep(lfc[names(lfc)==gene[1]],n()),
+                                                              rep(0,n()))) %>%
+                        dplyr::ungroup() %>%
+                        dplyr::select(gene_indicator))
+    
+    # 3. Build design matrix.
+    design_mat <- matrix(c(0,0,1,1))
+    colnames(design_mat) <- "treatment"
+    
+    # 4. Add signal to randomly sampled genes and their gRNAs.
+    thout <- thin_diff(mat = as.matrix(data[,3:ncol(data)]), 
+                      design_fixed = design_mat, 
+                      coef_fixed = coef_mat)
+    
+    # 5. Assemble input data for algorithms.
+    data_input <- data.frame(data[,1:2], thout$mat, stringsAsFactors = F)
+    colnames(data_input)[3:6] <- c(paste("control.",1:2,sep=""),paste("treat.",1:2,sep=""))
+    write_data(data_input)
+    
+    # 6. Run algorithms.
+    run_mageck()
+    run_drugz()
+    
+    # 7. Add expected logFC.
+    mageck_out <- process_output(lfc, type = "mageck")
+    drugz_out <- process_output(lfc, type = "drugz")
+    
+    # 8. Estimate performance.
+    
+  }
+}
+
+
+```
+
+```{r}
+setwd("../tmp")
+```
+
+# Symmetrical fold changes
+
+## Prevalence: 10%
+
+
+
+### Selection: Strong
+
+### Selection: Moderate
+
+### Selection: Weak
+
+## Prevalence: 5%
+
+### Selection: Strong
+
+### Selection: Moderate
+
+### Selection: Weak
+
+## Prevalence: 1%
+
+### Selection: Strong
+
+### Selection: Moderate
+
+### Selection: Weak
+
+## Prevalence: 0.1%
+
+### Selection: Strong
+
+### Selection: Moderate
+
+### Selection: Weak
+
+# Asymmetrical fold changes
+
+## Prevalence: 10%
+
+### Selection: Strong
+
+### Selection: Moderate
+
+### Selection: Weak
+
+## Prevalence: 5%
+
+### Selection: Strong
+
+### Selection: Moderate
+
+### Selection: Weak
+
+## Prevalence: 1%
+
+### Selection: Strong
+
+### Selection: Moderate
+
+### Selection: Weak
+
+## Prevalence: 0.1%
+
+### Selection: Strong
+
+### Selection: Moderate
+
+### Selection: Weak
+
+
+
