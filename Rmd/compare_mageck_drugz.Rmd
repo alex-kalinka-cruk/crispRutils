@@ -16,6 +16,8 @@ output:
 # Setup
 
 ```{r setup, include=FALSE}
+num_reps <- 2
+
 set.seed(1)
 
 options(warn=-1)
@@ -26,27 +28,36 @@ suppressMessages(library(ggplot2))
 suppressMessages(library(dplyr))
 suppressMessages(library(seqgendiff))
 
+# Data all from one screen.
 c903 <- read.table("../data/HT29_c903.tsv", header=T, stringsAsFactors = F)[,c(1:7)] %>%
-  dplye::select(-ERS717283.plasmid)
+  dplyr::select(-ERS717283.plasmid) %>%
+  dplyr::filter(rowSums(.[,3:6]) > 30)
+
+# Data from 4 different screens.
+cFour <- cbind(read.table("../data/HT29_c905.tsv", header=T, stringsAsFactors = F) %>%
+                 select(sgRNA, gene, HT29_c905R4),
+               read.table("../data/HT29_c906.tsv", header=T, stringsAsFactors = F) %>%
+                 select(HT29_c906R8),
+               read.table("../data/HT29_c907.tsv", header=T, stringsAsFactors = F) %>%
+                 select(HT29_c907R7),
+               read.table("../data/HT29_c908.tsv", header=T, stringsAsFactors = F) %>%
+                 select(HT29_c908R6)) %>%
+  dplyr::filter(rowSums(.[,3:6]) > 30)
 
 ## Common functions.
-add_drugz_path <- function(){
-  system("export PATH=~/git-projects/drugz:$PATH")
-}
-
 write_data <- function(data){
-  # Write data for Mageck to use.
-  write.table(data, file = "bthin_input.txt", col.names = T, row.names = F, sep="\t")
+  # Write data for algorithms to use.
+  write.table(data, file = "bthin_input.txt", col.names = T, row.names = F, sep="\t", quote=F)
 }
 
 run_mageck <- function(){
-  cmd <- "mageck test -k bthin_input.txt -t treat.1,treat.2 -c control.1,control.2 -n mageck_out"
-  system(cmd, show.output.on.console = F)
+  cmd <- "source ~/miniconda3/bin/activate; mageck test -k bthin_input.txt -t treat.1,treat.2 -c control.1,control.2 -n mageck_out"
+  system(cmd)
 }
 
 run_drugz <- function(){
-  cmd <- "drugz.py -i bthin_input.txt -c control.1,control.2 -x treat.1,treat.2 -f drugz-out-lfc.txt -o drugz-out.txt -unpaired"
-  system(cmd, show.output.on.console = F)
+  cmd <- "source ~/miniconda3/bin/activate; export PATH=~/git-projects/drugz:$PATH; drugz.py -i bthin_input.txt -c control.1,control.2 -x treat.1,treat.2 -o drugz-out.txt -unpaired"
+  system(cmd)
 }
 
 read_mageck <- function(){
@@ -61,18 +72,18 @@ read_drugz <- function(){
 process_output <- function(lfc, type){
   if(type == "mageck"){
     data <- read_mageck()
-    gene_name <- "id"
+    gene_col <- "id"
     col.1 <- "neg.fdr"
     col.2 <- "pos.fdr"
   }else{
     data <- read_drugz()
-    gene_name <- "GENE"
+    gene_col <- "GENE"
     col.1 <- "fdr_synth"
     col.2 <- "fdr_supp"
   }
   ret <- data %>%
-    mutate(lfc_bthin = ifelse(!!sym(gene_name) %in% names(lfc), 
-                              lfc[match(!!sym(gene_name), names(lfc))], 0)) %>%
+    mutate(lfc_bthin = ifelse(!!sym(gene_col) %in% names(lfc), 
+                              lfc[match(!!sym(gene_col), names(lfc))], 0)) %>%
     rowwise() %>%
     mutate(sign.1 = (!!sym(col.1) < 0.1 || !!sym(col.2) < 0.1),
            # LOD cut-offs for genes to ignore when calculating performance estimates.
@@ -83,10 +94,10 @@ process_output <- function(lfc, type){
            ignore.0.6 = (abs(lfc_bthin) > 0 && abs(lfc_bthin) < 0.6),
            ignore.0.4 = (abs(lfc_bthin) > 0 && abs(lfc_bthin) < 0.4),
            ignore.0.2 = (abs(lfc_bthin) > 0 && abs(lfc_bthin) < 0.2),
-           ignore.0.0 = F,
+           ignore.0 = F,
            true_neg = lfc_bthin==0, true_pos = abs(lfc_bthin)>0,
            false_pos = (sign.1 && lfc_bthin==0),
-           false_neg = (!sign.1 && lfc_bthin>0)) %>%
+           false_neg = (!sign.1 && abs(lfc_bthin)>0)) %>%
     ungroup()
   return(ret)
 }
@@ -99,8 +110,8 @@ estimate_performance <- function(data){
                 data %>%
                   filter(! (!!sym(paste("ignore.",i,sep="")))) %>%
                   summarise(logFC.LOD = i,
-                            specificity = 1-sum(false_pos)/sum(true_neg),
-                            sensitivity = 1-sum(false_neg)/sum(true_pos))
+                            Specificity = 1-sum(false_pos)/sum(true_neg),
+                            Sensitivity = 1-sum(false_neg)/sum(true_pos))
     )
   }
   return(pf)
@@ -113,8 +124,7 @@ rand_logfc <- function(fun, params, num){
 }
 
 # Replicate signal additions.
-repl_signal_add <- function(data, num_reps, num_genes, signal_fun, signal_params){
-  add_drugz_path()
+add_signal_repl <- function(data, num_reps, num_genes, signal_fun, signal_params){
   # data expected to have plasmid column(s) removed in advance.
   ret_sig <- NULL
   ret_perf <- NULL
@@ -135,7 +145,10 @@ repl_signal_add <- function(data, num_reps, num_genes, signal_fun, signal_params
                         dplyr::select(gene_indicator))
     
     # 3. Build design matrix.
-    design_mat <- matrix(c(0,0,1,1))
+    design_cols <- rep(0,4)
+    treat_cols <- sample(1:4,2,replace=F)
+    design_cols[treat_cols] <- 1
+    design_mat <- matrix(design_cols)
     colnames(design_mat) <- "treatment"
     
     # 4. Add signal to randomly sampled genes and their gRNAs.
@@ -145,7 +158,8 @@ repl_signal_add <- function(data, num_reps, num_genes, signal_fun, signal_params
     
     # 5. Assemble input data for algorithms.
     data_input <- data.frame(data[,1:2], thout$mat, stringsAsFactors = F)
-    colnames(data_input)[3:6] <- c(paste("control.",1:2,sep=""),paste("treat.",1:2,sep=""))
+    colnames(data_input)[setdiff(1:4,treat_cols)+2] <- paste("control.",1:2,sep="")
+    colnames(data_input)[treat_cols+2] <- paste("treat.",1:2,sep="")
     write_data(data_input)
     
     # 6. Run algorithms.
@@ -157,10 +171,13 @@ repl_signal_add <- function(data, num_reps, num_genes, signal_fun, signal_params
     drugz_out <- process_output(lfc, type = "drugz")
     
     # 8. Estimate performance.
+    pf <- rbind(data.frame(Algorithm="Mageck",estimate_performance(mageck_out)),
+                data.frame(Algorithm="drugZ",estimate_performance(drugz_out)))
     
+    ret_perf <- rbind(ret_perf, pf)
   }
+  return(ret_perf)
 }
-
 
 ```
 
@@ -168,11 +185,42 @@ repl_signal_add <- function(data, num_reps, num_genes, signal_fun, signal_params
 setwd("../tmp")
 ```
 
-# Symmetrical fold changes
+# Symmetric fold changes
 
 ## Prevalence: 10%
 
+### Selection: Strong
 
+```{r}
+p10.s <- rbind(data.frame(dataset = "c903", add_signal_repl(c903, num_reps = 2, num_genes = 1800, 
+                         signal_fun = rnorm, 
+                         signal_params = list(mean = 0, sd = 1.5)), stringsAsFactors = F),
+               data.frame(dataset = "cFour", add_signal_repl(cFour, num_reps = 2, num_genes = 1800, 
+                         signal_fun = rnorm, 
+                         signal_params = list(mean = 0, sd = 1.5)), stringsAsFactors = F))
+
+
+```
+
+### Selection: Moderate
+
+```{r}
+p10.m <- add_signal_repl(c903, num_reps = 2, num_genes = 1800, 
+                         signal_fun = rnorm, 
+                         signal_params = list(mean = 0, sd = 1))
+
+```
+
+### Selection: Weak
+
+```{r}
+p10.w <- add_signal_repl(c903, num_reps = 2, num_genes = 1800, 
+                         signal_fun = rnorm, 
+                         signal_params = list(mean = 0, sd = 0.5))
+
+```
+
+## Prevalence: 5%
 
 ### Selection: Strong
 
@@ -180,7 +228,7 @@ setwd("../tmp")
 
 ### Selection: Weak
 
-## Prevalence: 5%
+## Prevalence: 2.5%
 
 ### Selection: Strong
 
@@ -200,46 +248,105 @@ setwd("../tmp")
 
 ### Selection: Strong
 
-### Selection: Moderate
+```{r}
+p01.s <- add_signal_repl(c903, num_reps = 2, num_genes = 18, 
+                         signal_fun = rnorm, 
+                         signal_params = list(mean = 0, sd = 1.5))
 
-### Selection: Weak
-
-
-
-
-# Asymmetrical fold changes
-
-## Prevalence: 10%
-
-### Selection: Strong
-
-### Selection: Moderate
-
-### Selection: Weak
-
-## Prevalence: 5%
-
-### Selection: Strong
-
-### Selection: Moderate
-
-### Selection: Weak
-
-## Prevalence: 1%
-
-### Selection: Strong
-
-### Selection: Moderate
-
-### Selection: Weak
-
-## Prevalence: 0.1%
-
-### Selection: Strong
+```
 
 ### Selection: Moderate
 
 ### Selection: Weak
 
 
+
+
+# Asymmetric fold changes
+
+## Gaussian
+
+### Prevalence: 10%
+
+#### Selection: Strong
+
+#### Selection: Moderate
+
+#### Selection: Weak
+
+### Prevalence: 5%
+
+#### Selection: Strong
+
+#### Selection: Moderate
+
+#### Selection: Weak
+
+### Prevalence: 2.5%
+
+#### Selection: Strong
+
+#### Selection: Moderate
+
+#### Selection: Weak
+
+### Prevalence: 1%
+
+#### Selection: Strong
+
+#### Selection: Moderate
+
+#### Selection: Weak
+
+### Prevalence: 0.1%
+
+#### Selection: Strong
+
+#### Selection: Moderate
+
+#### Selection: Weak
+
+
+
+## Gamma
+
+### Prevalence: 10%
+
+#### Selection: Strong
+
+#### Selection: Moderate
+
+#### Selection: Weak
+
+### Prevalence: 5%
+
+#### Selection: Strong
+
+#### Selection: Moderate
+
+#### Selection: Weak
+
+### Prevalence: 2.5%
+
+#### Selection: Strong
+
+#### Selection: Moderate
+
+#### Selection: Weak
+
+### Prevalence: 1%
+
+#### Selection: Strong
+
+#### Selection: Moderate
+
+#### Selection: Weak
+
+### Prevalence: 0.1%
+
+#### Selection: Strong
+
+#### Selection: Moderate
+
+#### Selection: Weak
 
