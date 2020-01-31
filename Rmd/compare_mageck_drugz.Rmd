@@ -28,6 +28,10 @@ suppressMessages(library(ggplot2))
 suppressMessages(library(dplyr))
 suppressMessages(library(seqgendiff))
 
+# Example to illustrate sensitivity issue for Mageck under strong selection + high prevalence.
+load("../data/nz_lfc.rda")
+load("../data/mg_lfc.rda")
+
 # Data all from one screen.
 c903 <- read.table("../data/HT29_c903.tsv", header=T, stringsAsFactors = F)[,c(1:7)] %>%
   dplyr::select(-ERS717283.plasmid) %>%
@@ -44,6 +48,10 @@ cFour <- cbind(read.table("../data/HT29_c905.tsv", header=T, stringsAsFactors = 
                  select(HT29_c908R6)) %>%
   dplyr::filter(rowSums(.[,3:6]) > 30)
 
+```
+
+
+```{r}
 ## Common functions.
 write_data <- function(data){
   # Write data for algorithms to use.
@@ -125,9 +133,9 @@ rand_logfc <- function(fun, params, num){
 
 # Replicate signal additions.
 add_signal_repl <- function(data, num_reps, num_genes, signal_fun, signal_params){
-  # data expected to have plasmid column(s) removed in advance.
-  ret_sig <- NULL
+  # 'data' expected to have plasmid column(s) removed in advance.
   ret_perf <- NULL
+  ret_sig_mageck <- ret_sig_drugz <- list()
   for(i in 1:num_reps){
     # 1. Randomly sample genes to receive a signal sampled from a particular distribution.
     lfc <- rand_logfc(signal_fun, signal_params, num_genes)
@@ -175,8 +183,14 @@ add_signal_repl <- function(data, num_reps, num_genes, signal_fun, signal_params
                 data.frame(Algorithm="drugZ",estimate_performance(drugz_out)))
     
     ret_perf <- rbind(ret_perf, pf)
+    ret_sig_mageck[[i]] <- mageck_out
+    ret_sig_drugz[[i]] <- drugz_out
   }
-  return(ret_perf)
+  ret <- list()
+  ret$signal_mageck <- ret_sig_mageck
+  ret$signal_drugz <- ret_sig_drugz
+  ret$performance <- ret_perf
+  return(ret)
 }
 
 ```
@@ -185,13 +199,83 @@ add_signal_repl <- function(data, num_reps, num_genes, signal_fun, signal_params
 setwd("../tmp")
 ```
 
+# Example
+
+From a single high prevalence (10%), strong selection (SD 1.5) example.
+
+```{r,eval=F}
+# Compare normZ for logFC groups (expected).
+nz_lfc <- rbind(p10.s$signal_drugz[[1]] %>%
+                  mutate(selection = "Strong"),
+                p10.m$signal_drugz[[1]] %>%
+                  mutate(selection = "Moderate"),
+                p10.w$signal_drugz[[1]] %>%
+                  mutate(selection = "Weak")) %>%
+  filter(abs(lfc_bthin) > 0) %>%
+  mutate(selection = factor(selection, levels=c("Weak","Moderate","Strong")),
+         normZ.abs = abs(normZ),
+         lfc_group.abs = case_when(between(abs(lfc_bthin),0.01,0.2499999) ~ "[0.01,0.25)",
+                                   between(abs(lfc_bthin),0.25,0.4999999) ~ "[0.25,0.5)",
+                               between(abs(lfc_bthin),0.5,0.9999999) ~ "[0.5,1)",
+                               between(abs(lfc_bthin),1,1.4999999) ~ "[1,1.5)",
+                               between(abs(lfc_bthin),1.5,1.9999999) ~ "[1.5,2)",
+                               abs(lfc_bthin) >= 2 ~ ">=2")) %>%
+  filter(!is.na(lfc_group.abs))
+
+# Mageck comparison using both RRA p-value score and observed logFC.
+mg_lfc <- rbind(p10.s$signal_mageck[[1]] %>%
+                  mutate(selection = "Strong"),
+                p10.m$signal_mageck[[1]] %>%
+                  mutate(selection = "Moderate"),
+                p10.w$signal_mageck[[1]] %>%
+                  mutate(selection = "Weak")) %>%
+  rowwise() %>%
+  mutate(selection = factor(selection, levels=c("Weak","Moderate","Strong")),
+         logfc.obs = max(c(abs(neg.lfc),abs(pos.lfc))),
+         log.RAA.pval = -log(min(c(neg.score,pos.score))),
+         lfc_group.abs = case_when(between(abs(lfc_bthin),0.01,0.2499999) ~ "[0.01,0.25)",
+                                   between(abs(lfc_bthin),0.25,0.4999999) ~ "[0.25,0.5)",
+                               between(abs(lfc_bthin),0.5,0.9999999) ~ "[0.5,1)",
+                               between(abs(lfc_bthin),1,1.4999999) ~ "[1,1.5)",
+                               between(abs(lfc_bthin),1.5,1.9999999) ~ "[1.5,2)",
+                               abs(lfc_bthin) >= 2 ~ ">=2")) %>%
+  ungroup() %>%
+  filter(!is.na(lfc_group.abs))
+
+```
+
+```{r}
+ggplot(nz_lfc,aes(lfc_group.abs,abs(sumZ),color=selection)) +
+  geom_point(position=position_dodge(width=0.75)) +
+  geom_boxplot() +
+  ylim(0,45) +
+  ggtitle("drugZ sumZ by added signal groups: 10% prevalence")
+
+ggplot(nz_lfc,aes(lfc_group.abs,normZ.abs,color=selection)) +
+  geom_point(position=position_dodge(width=0.75)) +
+  geom_boxplot() +
+  ggtitle("drugZ normZ by added signal groups: 10% prevalence")
+
+ggplot(mg_lfc,aes(lfc_group.abs,logfc.obs,color=selection)) +
+  geom_point(position=position_dodge(width=0.75)) +
+  geom_boxplot() +
+  ggtitle("Mageck logfc_obs by added signal groups: 10% prevalence")
+
+ggplot(mg_lfc,aes(lfc_group.abs,log.RAA.pval,color=selection)) +
+  geom_point(position=position_dodge(width=0.75)) +
+  geom_boxplot() +
+  ggtitle("Mageck log(RAA.pval) by added signal groups: 10% prevalence")
+
+```
+
 # Symmetric fold changes
 
 ## Prevalence: 10%
 
-### Selection: Strong
+### No library thinning
 
 ```{r}
+# String selection.
 p10.s <- rbind(data.frame(dataset = "c903", add_signal_repl(c903, num_reps = 2, num_genes = 1800, 
                          signal_fun = rnorm, 
                          signal_params = list(mean = 0, sd = 1.5)), stringsAsFactors = F),
@@ -199,54 +283,37 @@ p10.s <- rbind(data.frame(dataset = "c903", add_signal_repl(c903, num_reps = 2, 
                          signal_fun = rnorm, 
                          signal_params = list(mean = 0, sd = 1.5)), stringsAsFactors = F))
 
-
-```
-
-### Selection: Moderate
-
-```{r}
-p10.m <- add_signal_repl(c903, num_reps = 2, num_genes = 1800, 
+# Moderate selection.
+p10.m <- add_signal_repl(c903, num_reps = 1, num_genes = 1800, 
                          signal_fun = rnorm, 
                          signal_params = list(mean = 0, sd = 1))
 
-```
-
-### Selection: Weak
-
-```{r}
-p10.w <- add_signal_repl(c903, num_reps = 2, num_genes = 1800, 
+# Weak selection.
+p10.w <- add_signal_repl(c903, num_reps = 1, num_genes = 1800, 
                          signal_fun = rnorm, 
                          signal_params = list(mean = 0, sd = 0.5))
 
 ```
 
+### Library thinning
+
+
+
+
 ## Prevalence: 5%
 
-### Selection: Strong
 
-### Selection: Moderate
-
-### Selection: Weak
 
 ## Prevalence: 2.5%
 
-### Selection: Strong
 
-### Selection: Moderate
-
-### Selection: Weak
 
 ## Prevalence: 1%
 
-### Selection: Strong
 
-### Selection: Moderate
-
-### Selection: Weak
 
 ## Prevalence: 0.1%
 
-### Selection: Strong
 
 ```{r}
 p01.s <- add_signal_repl(c903, num_reps = 2, num_genes = 18, 
@@ -255,12 +322,6 @@ p01.s <- add_signal_repl(c903, num_reps = 2, num_genes = 18,
 
 ```
 
-### Selection: Moderate
-
-### Selection: Weak
-
-
-
 
 # Asymmetric fold changes
 
@@ -268,43 +329,23 @@ p01.s <- add_signal_repl(c903, num_reps = 2, num_genes = 18,
 
 ### Prevalence: 10%
 
-#### Selection: Strong
 
-#### Selection: Moderate
-
-#### Selection: Weak
 
 ### Prevalence: 5%
 
-#### Selection: Strong
 
-#### Selection: Moderate
-
-#### Selection: Weak
 
 ### Prevalence: 2.5%
 
-#### Selection: Strong
 
-#### Selection: Moderate
-
-#### Selection: Weak
 
 ### Prevalence: 1%
 
-#### Selection: Strong
 
-#### Selection: Moderate
-
-#### Selection: Weak
 
 ### Prevalence: 0.1%
 
-#### Selection: Strong
 
-#### Selection: Moderate
-
-#### Selection: Weak
 
 
 
@@ -312,41 +353,21 @@ p01.s <- add_signal_repl(c903, num_reps = 2, num_genes = 18,
 
 ### Prevalence: 10%
 
-#### Selection: Strong
 
-#### Selection: Moderate
-
-#### Selection: Weak
 
 ### Prevalence: 5%
 
-#### Selection: Strong
 
-#### Selection: Moderate
-
-#### Selection: Weak
 
 ### Prevalence: 2.5%
 
-#### Selection: Strong
 
-#### Selection: Moderate
-
-#### Selection: Weak
 
 ### Prevalence: 1%
 
-#### Selection: Strong
 
-#### Selection: Moderate
-
-#### Selection: Weak
 
 ### Prevalence: 0.1%
 
-#### Selection: Strong
 
-#### Selection: Moderate
-
-#### Selection: Weak
 
