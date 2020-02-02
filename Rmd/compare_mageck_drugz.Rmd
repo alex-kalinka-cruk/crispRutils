@@ -1516,4 +1516,37 @@ plot_sens_lod(p01.w.tl)
 
 ```
 
+# Analysis
+
+Relative performance taken as median of log ratio of sensitivity across all `logFC.LOD` - drugZ/Mageck.
+
+```{r}
+pall <- rbind(readRDS(file="../Rmd/pall.rds") %>%
+                mutate(fc_distr = "Normal"),
+              readRDS(file="../Rmd/pall-gamma.rds") %>%
+                mutate(fc_distr = "Gamma")) %>%
+  mutate(replicate = rep(1:(n()/16),each=16))
+
+rp <- pall %>%
+  dplyr::filter(!is.na(Sensitivity)) %>%
+  group_by(replicate, logFC.LOD) %>%
+  summarise(fc_distr = fc_distr[1], Selection = Selection[1],
+            Prevalence = Prevalence[1],
+            log_ratio_sens = log(Sensitivity[Algorithm=="drugZ"]/Sensitivity[Algorithm=="Mageck"])) %>%
+  ungroup() %>%
+  group_by(replicate) %>%
+  summarise(fc_distr = fc_distr[1], Selection = Selection[1],
+            Prevalence = Prevalence[1],
+            log_ratio_sensitivity.median = median(log_ratio_sens)) %>%
+  ungroup()
+
+ggplot(rp, aes(Prevalence, log_ratio_sensitivity.median, color = Selection)) +
+  geom_point(position = position_dodge(width=0.75)) +
+  geom_boxplot(fill=NA) +
+  geom_hline(yintercept = 0, linetype="dashed") +
+  facet_wrap(~fc_distr) +
+  ggtitle("Sensitivity Ratio: -ve Mageck better; +ve drugZ better")
+
+```
+
 
