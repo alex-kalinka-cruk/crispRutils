@@ -1108,7 +1108,412 @@ plot_sens_lod(p01.w.tl.as)
 ## Gamma
 
 ```{r}
-gamma_params <- list(shape = 1, scale = 1)
+gamma_params.strong <- list(shape = 1, scale = 1)
+gamma_params.moderate <- list(shape = 1, scale = 2)
+gamma_params.weak <- list(shape = 1, scale = 3)
+```
+
+## Prevalence: 10%
+
+### No library thinning
+
+```{r}
+# Strong selection.
+p10.s <- rbind(data.frame(dataset = "c903", add_signal_repl(c903, num_reps = num_reps, num_genes = 1800, 
+                         signal_fun = rgamma, 
+                         signal_params = gamma_params.strong), stringsAsFactors = F),
+               data.frame(dataset = "cFour", add_signal_repl(cFour, num_reps = num_reps, num_genes = 1800, 
+                         signal_fun = rgamma, 
+                         signal_params = gamma_params.strong), stringsAsFactors = F))
+
+# Moderate selection.
+p10.m <- rbind(data.frame(dataset = "c903", add_signal_repl(c903, num_reps = num_reps, num_genes = 1800, 
+                         signal_fun = rgamma, 
+                         signal_params = gamma_params.moderate), stringsAsFactors = F),
+               data.frame(dataset = "cFour", add_signal_repl(cFour, num_reps = num_reps, num_genes = 1800, 
+                         signal_fun = rgamma, 
+                         signal_params =gamma_params.moderate), stringsAsFactors = F))
+# Weak selection.
+p10.w <- rbind(data.frame(dataset = "c903", add_signal_repl(c903, num_reps = num_reps, num_genes = 1800, 
+                         signal_fun = rgamma, 
+                         signal_params = gamma_params.weak), stringsAsFactors = F),
+               data.frame(dataset = "cFour", add_signal_repl(cFour, num_reps = num_reps, num_genes = 1800, 
+                         signal_fun = rgamma, 
+                         signal_params = gamma_params.weak), stringsAsFactors = F))
+
+pall <- rbind(pall,
+              data.frame(Selection = "Strong", Prevalence = "10%", thin_lib = F, p10.s),
+             data.frame(Selection = "Moderate", Prevalence = "10%", thin_lib = F, p10.m),
+             data.frame(Selection = "Weak", Prevalence = "10%", thin_lib = F, p10.w))
+
+saveRDS(pall, file="pall.rds", compress="xz")
+
+plot_sens_lod(p10.s)
+plot_sens_lod(p10.m)
+plot_sens_lod(p10.w)
+
+```
+
+### Library thinning
+
+```{r}
+# Strong selection.
+p10.s.tl <- rbind(data.frame(dataset = "c903", add_signal_repl(c903, num_reps = num_reps, num_genes = 1800, 
+                         signal_fun = rgamma, 
+                         signal_params = gamma_params.strong, thin_library = T), stringsAsFactors = F),
+               data.frame(dataset = "cFour", add_signal_repl(cFour, num_reps = num_reps, num_genes = 1800, 
+                         signal_fun = rgamma, 
+                         signal_params = gamma_params.strong, thin_library = T), stringsAsFactors = F))
+
+# Moderate selection.
+p10.m.tl <- rbind(data.frame(dataset = "c903", add_signal_repl(c903, num_reps = num_reps, num_genes = 1800, 
+                         signal_fun = rgamma, 
+                         signal_params = gamma_params.moderate, thin_library = T), stringsAsFactors = F),
+               data.frame(dataset = "cFour", add_signal_repl(cFour, num_reps = num_reps, num_genes = 1800, 
+                         signal_fun = rgamma, 
+                         signal_params = gamma_params.moderate, thin_library = T), stringsAsFactors = F))
+# Weak selection.
+p10.w.tl <- rbind(data.frame(dataset = "c903", add_signal_repl(c903, num_reps = num_reps, num_genes = 1800, 
+                         signal_fun = rgamma, 
+                         signal_params = gamma_params.weak, thin_library = T), stringsAsFactors = F),
+               data.frame(dataset = "cFour", add_signal_repl(cFour, num_reps = num_reps, num_genes = 1800, 
+                         signal_fun = rgamma, 
+                         signal_params = gamma_params.weak, thin_library = T), stringsAsFactors = F))
+
+pall <- rbind(pall,
+             data.frame(Selection = "Strong", Prevalence = "10%", thin_lib = T, p10.s.tl),
+             data.frame(Selection = "Moderate", Prevalence = "10%", thin_lib = T, p10.m.tl),
+             data.frame(Selection = "Weak", Prevalence = "10%", thin_lib = T, p10.w.tl))
+
+saveRDS(pall, file="pall.rds", compress="xz")
+
+plot_sens_lod(p10.s.tl)
+plot_sens_lod(p10.m.tl)
+plot_sens_lod(p10.w.tl)
+
+```
+
+
+## Prevalence: 5%
+
+### No library thinning
+
+```{r}
+# Strong selection.
+p5.s <- rbind(data.frame(dataset = "c903", add_signal_repl(c903, num_reps = num_reps, num_genes = 900, 
+                         signal_fun = rgamma, 
+                         signal_params = gamma_params.strong), stringsAsFactors = F),
+               data.frame(dataset = "cFour", add_signal_repl(cFour, num_reps = num_reps, num_genes = 900, 
+                         signal_fun = rgamma, 
+                         signal_params = gamma_params.strong), stringsAsFactors = F))
+
+# Moderate selection.
+p5.m <- rbind(data.frame(dataset = "c903", add_signal_repl(c903, num_reps = num_reps, num_genes = 900, 
+                         signal_fun = rgamma, 
+                         signal_params = gamma_params.moderate), stringsAsFactors = F),
+               data.frame(dataset = "cFour", add_signal_repl(cFour, num_reps = num_reps, num_genes = 900, 
+                         signal_fun = rgamma, 
+                         signal_params = gamma_params.moderate), stringsAsFactors = F))
+# Weak selection.
+p5.w <- rbind(data.frame(dataset = "c903", add_signal_repl(c903, num_reps = num_reps, num_genes = 900, 
+                         signal_fun = rgamma, 
+                         signal_params = gamma_params.weak), stringsAsFactors = F),
+               data.frame(dataset = "cFour", add_signal_repl(cFour, num_reps = num_reps, num_genes = 900, 
+                         signal_fun = rgamma, 
+                         signal_params = gamma_params.weak), stringsAsFactors = F))
+
+pall <- rbind(pall,
+             data.frame(Selection = "Strong", Prevalence = "5%", thin_lib = F, p5.s),
+             data.frame(Selection = "Moderate", Prevalence = "5%", thin_lib = F, p5.m),
+             data.frame(Selection = "Weak", Prevalence = "5%", thin_lib = F, p5.w))
+
+saveRDS(pall, file="pall.rds", compress="xz")
+
+plot_sens_lod(p5.s)
+plot_sens_lod(p5.m)
+plot_sens_lod(p5.w)
+
+```
+
+### Library thinning
+
+```{r}
+# Strong selection.
+p5.s.tl <- rbind(data.frame(dataset = "c903", add_signal_repl(c903, num_reps = num_reps, num_genes = 900, 
+                         signal_fun = rgamma, 
+                         signal_params = gamma_params.strong, thin_library = T), stringsAsFactors = F),
+               data.frame(dataset = "cFour", add_signal_repl(cFour, num_reps = num_reps, num_genes = 900, 
+                         signal_fun = rgamma, 
+                         signal_params = gamma_params.strong, thin_library = T), stringsAsFactors = F))
+
+# Moderate selection.
+p5.m.tl <- rbind(data.frame(dataset = "c903", add_signal_repl(c903, num_reps = num_reps, num_genes = 900, 
+                         signal_fun = rgamma, 
+                         signal_params = gamma_params.moderate, thin_library = T), stringsAsFactors = F),
+               data.frame(dataset = "cFour", add_signal_repl(cFour, num_reps = num_reps, num_genes = 900, 
+                         signal_fun = rgamma, 
+                         signal_params = gamma_params.moderate, thin_library = T), stringsAsFactors = F))
+# Weak selection.
+p5.w.tl <- rbind(data.frame(dataset = "c903", add_signal_repl(c903, num_reps = num_reps, num_genes = 900, 
+                         signal_fun = rgamma, 
+                         signal_params = gamma_params.weak, thin_library = T), stringsAsFactors = F),
+               data.frame(dataset = "cFour", add_signal_repl(cFour, num_reps = num_reps, num_genes = 900, 
+                         signal_fun = rgamma, 
+                         signal_params = gamma_params.weak, thin_library = T), stringsAsFactors = F))
+
+pall <- rbind(pall,
+             data.frame(Selection = "Strong", Prevalence = "5%", thin_lib = T, p5.s.tl),
+             data.frame(Selection = "Moderate", Prevalence = "5%", thin_lib = T, p5.m.tl),
+             data.frame(Selection = "Weak", Prevalence = "5%", thin_lib = T, p5.w.tl))
+
+saveRDS(pall, file="pall.rds", compress="xz")
+
+plot_sens_lod(p5.s.tl)
+plot_sens_lod(p5.m.tl)
+plot_sens_lod(p5.w.tl)
+
+```
+
+## Prevalence: 2.5%
+
+### No library thinning
+
+```{r}
+# Strong selection.
+p2.5.s <- rbind(data.frame(dataset = "c903", add_signal_repl(c903, num_reps = num_reps, num_genes = 450, 
+                         signal_fun = rgamma, 
+                         signal_params = gamma_params.strong), stringsAsFactors = F),
+               data.frame(dataset = "cFour", add_signal_repl(cFour, num_reps = num_reps, num_genes = 450, 
+                         signal_fun = rgamma, 
+                         signal_params = gamma_params.strong), stringsAsFactors = F))
+
+# Moderate selection.
+p2.5.m <- rbind(data.frame(dataset = "c903", add_signal_repl(c903, num_reps = num_reps, num_genes = 450, 
+                         signal_fun = rgamma, 
+                         signal_params = gamma_params.moderate), stringsAsFactors = F),
+               data.frame(dataset = "cFour", add_signal_repl(cFour, num_reps = num_reps, num_genes = 450, 
+                         signal_fun = rgamma, 
+                         signal_params = gamma_params.moderate), stringsAsFactors = F))
+# Weak selection.
+p2.5.w <- rbind(data.frame(dataset = "c903", add_signal_repl(c903, num_reps = num_reps, num_genes = 450, 
+                         signal_fun = rgamma, 
+                         signal_params = gamma_params.weak), stringsAsFactors = F),
+               data.frame(dataset = "cFour", add_signal_repl(cFour, num_reps = num_reps, num_genes = 450, 
+                         signal_fun = rgamma, 
+                         signal_params = gamma_params.weak), stringsAsFactors = F))
+
+pall <- rbind(pall,
+             data.frame(Selection = "Strong", Prevalence = "2.5%", thin_lib = F, p2.5.s),
+             data.frame(Selection = "Moderate", Prevalence = "2.5%", thin_lib = F, p2.5.m),
+             data.frame(Selection = "Weak", Prevalence = "2.5%", thin_lib = F, p2.5.w))
+
+saveRDS(pall, file="pall.rds", compress="xz")
+
+plot_sens_lod(p2.5.s)
+plot_sens_lod(p2.5.m)
+plot_sens_lod(p2.5.w)
+
+```
+
+### Library thinning
+
+```{r}
+# Strong selection.
+p2.5.s.tl <- rbind(data.frame(dataset = "c903", add_signal_repl(c903, num_reps = num_reps, num_genes = 450, 
+                         signal_fun = rgamma, 
+                         signal_params = gamma_params.strong, thin_library = T), stringsAsFactors = F),
+               data.frame(dataset = "cFour", add_signal_repl(cFour, num_reps = num_reps, num_genes = 450, 
+                         signal_fun = rgamma, 
+                         signal_params = gamma_params.strong, thin_library = T), stringsAsFactors = F))
+
+# Moderate selection.
+p2.5.m.tl <- rbind(data.frame(dataset = "c903", add_signal_repl(c903, num_reps = num_reps, num_genes = 450, 
+                         signal_fun = rgamma, 
+                         signal_params = gamma_params.moderate, thin_library = T), stringsAsFactors = F),
+               data.frame(dataset = "cFour", add_signal_repl(cFour, num_reps = num_reps, num_genes = 450, 
+                         signal_fun = rgamma, 
+                         signal_params = gamma_params.moderate, thin_library = T), stringsAsFactors = F))
+# Weak selection.
+p2.5.w.tl <- rbind(data.frame(dataset = "c903", add_signal_repl(c903, num_reps = num_reps, num_genes = 450, 
+                         signal_fun = rgamma, 
+                         signal_params = gamma_params.weak, thin_library = T), stringsAsFactors = F),
+               data.frame(dataset = "cFour", add_signal_repl(cFour, num_reps = num_reps, num_genes = 450, 
+                         signal_fun = rgamma, 
+                         signal_params = gamma_params.weak, thin_library = T), stringsAsFactors = F))
+
+pall <- rbind(pall,
+             data.frame(Selection = "Strong", Prevalence = "2.5%", thin_lib = T, p2.5.s.tl),
+             data.frame(Selection = "Moderate", Prevalence = "2.5%", thin_lib = T, p2.5.m.tl),
+             data.frame(Selection = "Weak", Prevalence = "2.5%", thin_lib = T, p2.5.w.tl))
+
+saveRDS(pall, file="pall.rds", compress="xz")
+
+plot_sens_lod(p2.5.s.tl)
+plot_sens_lod(p2.5.m.tl)
+plot_sens_lod(p2.5.w.tl)
+
+```
+
+
+## Prevalence: 1%
+
+### No library thinning
+
+```{r}
+# Strong selection.
+p1.s <- rbind(data.frame(dataset = "c903", add_signal_repl(c903, num_reps = num_reps, num_genes = 180, 
+                         signal_fun = rgamma, 
+                         signal_params = gamma_params.strong), stringsAsFactors = F),
+               data.frame(dataset = "cFour", add_signal_repl(cFour, num_reps = num_reps, num_genes = 180, 
+                         signal_fun = rgamma, 
+                         signal_params = gamma_params.strong), stringsAsFactors = F))
+
+# Moderate selection.
+p1.m <- rbind(data.frame(dataset = "c903", add_signal_repl(c903, num_reps = num_reps, num_genes = 180, 
+                         signal_fun = rgamma, 
+                         signal_params = gamma_params.moderate), stringsAsFactors = F),
+               data.frame(dataset = "cFour", add_signal_repl(cFour, num_reps = num_reps, num_genes = 180, 
+                         signal_fun = rgamma, 
+                         signal_params = gamma_params.moderate), stringsAsFactors = F))
+# Weak selection.
+p1.w <- rbind(data.frame(dataset = "c903", add_signal_repl(c903, num_reps = num_reps, num_genes = 180, 
+                         signal_fun = rgamma, 
+                         signal_params = gamma_params.weak), stringsAsFactors = F),
+               data.frame(dataset = "cFour", add_signal_repl(cFour, num_reps = num_reps, num_genes = 180, 
+                         signal_fun = rgamma, 
+                         signal_params = gamma_params.weak), stringsAsFactors = F))
+
+pall <- rbind(pall,
+             data.frame(Selection = "Strong", Prevalence = "1%", thin_lib = F, p1.s),
+             data.frame(Selection = "Moderate", Prevalence = "1%", thin_lib = F, p1.m),
+             data.frame(Selection = "Weak", Prevalence = "1%", thin_lib = F, p1.w))
+
+saveRDS(pall, file="pall.rds", compress="xz")
+
+plot_sens_lod(p1.s)
+plot_sens_lod(p1.m)
+plot_sens_lod(p1.w)
+
+```
+
+### Library thinning
+
+```{r}
+# Strong selection.
+p1.s.tl <- rbind(data.frame(dataset = "c903", add_signal_repl(c903, num_reps = num_reps, num_genes = 180, 
+                         signal_fun = rgamma, 
+                         signal_params = gamma_params.strong, thin_library = T), stringsAsFactors = F),
+               data.frame(dataset = "cFour", add_signal_repl(cFour, num_reps = num_reps, num_genes = 180, 
+                         signal_fun = rgamma, 
+                         signal_params = gamma_params.strong, thin_library = T), stringsAsFactors = F))
+
+# Moderate selection.
+p1.m.tl <- rbind(data.frame(dataset = "c903", add_signal_repl(c903, num_reps = num_reps, num_genes = 180, 
+                         signal_fun = rgamma, 
+                         signal_params = gamma_params.moderate, thin_library = T), stringsAsFactors = F),
+               data.frame(dataset = "cFour", add_signal_repl(cFour, num_reps = num_reps, num_genes = 180, 
+                         signal_fun = rgamma, 
+                         signal_params = gamma_params.moderate, thin_library = T), stringsAsFactors = F))
+# Weak selection.
+p1.w.tl <- rbind(data.frame(dataset = "c903", add_signal_repl(c903, num_reps = num_reps, num_genes = 180, 
+                         signal_fun = rgamma, 
+                         signal_params = gamma_params.weak, thin_library = T), stringsAsFactors = F),
+               data.frame(dataset = "cFour", add_signal_repl(cFour, num_reps = num_reps, num_genes = 180, 
+                         signal_fun = rgamma, 
+                         signal_params = gamma_params.weak, thin_library = T), stringsAsFactors = F))
+
+pall <- rbind(pall,
+             data.frame(Selection = "Strong", Prevalence = "1%", thin_lib = T, p1.s.tl),
+             data.frame(Selection = "Moderate", Prevalence = "1%", thin_lib = T, p1.m.tl),
+             data.frame(Selection = "Weak", Prevalence = "1%", thin_lib = T, p1.w.tl))
+
+saveRDS(pall, file="pall.rds", compress="xz")
+
+plot_sens_lod(p1.s.tl)
+plot_sens_lod(p1.m.tl)
+plot_sens_lod(p1.w.tl)
+
+```
+
+
+## Prevalence: 0.1%
+
+### No library thinning
+
+```{r}
+# Strong selection.
+p01.s <- rbind(data.frame(dataset = "c903", add_signal_repl(c903, num_reps = num_reps, num_genes = 18, 
+                         signal_fun = rgamma, 
+                         signal_params = gamma_params.strong), stringsAsFactors = F),
+               data.frame(dataset = "cFour", add_signal_repl(cFour, num_reps = num_reps, num_genes = 18, 
+                         signal_fun = rgamma, 
+                         signal_params = gamma_params.strong), stringsAsFactors = F))
+
+# Moderate selection.
+p01.m <- rbind(data.frame(dataset = "c903", add_signal_repl(c903, num_reps = num_reps, num_genes = 18, 
+                         signal_fun = rgamma, 
+                         signal_params = gamma_params.moderate), stringsAsFactors = F),
+               data.frame(dataset = "cFour", add_signal_repl(cFour, num_reps = num_reps, num_genes = 18, 
+                         signal_fun = rgamma, 
+                         signal_params = gamma_params.moderate), stringsAsFactors = F))
+# Weak selection.
+p01.w <- rbind(data.frame(dataset = "c903", add_signal_repl(c903, num_reps = num_reps, num_genes = 18, 
+                         signal_fun = rgamma, 
+                         signal_params = gamma_params.weak), stringsAsFactors = F),
+               data.frame(dataset = "cFour", add_signal_repl(cFour, num_reps = num_reps, num_genes = 18, 
+                         signal_fun = rgamma, 
+                         signal_params = gamma_params.weak), stringsAsFactors = F))
+
+pall <- rbind(pall,
+             data.frame(Selection = "Strong", Prevalence = "0.1%", thin_lib = F, p01.s),
+             data.frame(Selection = "Moderate", Prevalence = "0.1%", thin_lib = F, p01.m),
+             data.frame(Selection = "Weak", Prevalence = "0.1%", thin_lib = F, p01.w))
+
+saveRDS(pall, file="pall.rds", compress="xz")
+
+plot_sens_lod(p01.s)
+plot_sens_lod(p01.m)
+plot_sens_lod(p01.w)
+
+```
+
+### Library thinning
+
+```{r}
+# Strong selection.
+p01.s.tl <- rbind(data.frame(dataset = "c903", add_signal_repl(c903, num_reps = num_reps, num_genes = 18, 
+                         signal_fun = rgamma, 
+                         signal_params = gamma_params.strong, thin_library = T), stringsAsFactors = F),
+               data.frame(dataset = "cFour", add_signal_repl(cFour, num_reps = num_reps, num_genes = 18, 
+                         signal_fun = rgamma, 
+                         signal_params = gamma_params.strong, thin_library = T), stringsAsFactors = F))
+
+# Moderate selection.
+p01.m.tl <- rbind(data.frame(dataset = "c903", add_signal_repl(c903, num_reps = num_reps, num_genes = 18, 
+                         signal_fun = rgamma, 
+                         signal_params = gamma_params.moderate, thin_library = T), stringsAsFactors = F),
+               data.frame(dataset = "cFour", add_signal_repl(cFour, num_reps = num_reps, num_genes = 18, 
+                         signal_fun = rgamma, 
+                         signal_params = gamma_params.moderate, thin_library = T), stringsAsFactors = F))
+# Weak selection.
+p01.w.tl <- rbind(data.frame(dataset = "c903", add_signal_repl(c903, num_reps = num_reps, num_genes = 18, 
+                         signal_fun = rgamma, 
+                         signal_params = gamma_params.weak, thin_library = T), stringsAsFactors = F),
+               data.frame(dataset = "cFour", add_signal_repl(cFour, num_reps = num_reps, num_genes = 18, 
+                         signal_fun = rgamma, 
+                         signal_params = gamma_params.weak, thin_library = T), stringsAsFactors = F))
+
+pall <- rbind(pall,
+             data.frame(Selection = "Strong", Prevalence = "0.1%", thin_lib = T, p01.s.tl),
+             data.frame(Selection = "Moderate", Prevalence = "0.1%", thin_lib = T, p01.m.tl),
+             data.frame(Selection = "Weak", Prevalence = "0.1%", thin_lib = T, p01.w.tl))
+
+saveRDS(pall, file="pall.rds", compress="xz")
+
+plot_sens_lod(p01.s.tl)
+plot_sens_lod(p01.m.tl)
+plot_sens_lod(p01.w.tl)
+
 ```
 
 
