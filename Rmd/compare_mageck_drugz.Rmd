@@ -1529,7 +1529,7 @@ plot_sens_lod(p01.w.tl)
 ```
 
 
-## Gaussian - mixture
+## Gaussian - bimodal
 
 ```{r}
 gauss_mean <- 1.5
@@ -1941,7 +1941,9 @@ plot_sens_lod(p01.w.tl.as)
 ## Pareto
 
 ```{r}
-pareto_params <- list(location = 1.5, shape = 3)
+pareto_params.strong <- list(location = 1.5, shape = 5)
+pareto_params.moderate <- list(location = 1.5, shape = 7)
+pareto_params.weak <- list(location = 1.5, shape = 9)
 ```
 
 ### Prevalence: 10%
@@ -1952,25 +1954,25 @@ pareto_params <- list(location = 1.5, shape = 3)
 # Strong selection.
 p10.s.as <- rbind(data.frame(dataset = "c903", add_signal_repl(c903, num_reps = num_reps, num_genes = 1800, 
                          signal_fun = rpareto, 
-                         signal_params = pareto_params), stringsAsFactors = F),
+                         signal_params = pareto_params.strong), stringsAsFactors = F),
                data.frame(dataset = "cFour", add_signal_repl(cFour, num_reps = num_reps, num_genes = 1800, 
                          signal_fun = rpareto, 
-                         signal_params = pareto_params), stringsAsFactors = F))
+                         signal_params = pareto_params.strong), stringsAsFactors = F))
 
 # Moderate selection.
 p10.m.as <- rbind(data.frame(dataset = "c903", add_signal_repl(c903, num_reps = num_reps, num_genes = 1800, 
                          signal_fun = rpareto, 
-                         signal_params = pareto_params), stringsAsFactors = F),
+                         signal_params = pareto_params.moderate), stringsAsFactors = F),
                data.frame(dataset = "cFour", add_signal_repl(cFour, num_reps = num_reps, num_genes = 1800, 
                          signal_fun = rpareto, 
-                         signal_params = pareto_params), stringsAsFactors = F))
+                         signal_params = pareto_params.moderate), stringsAsFactors = F))
 # Weak selection.
 p10.w.as <- rbind(data.frame(dataset = "c903", add_signal_repl(c903, num_reps = num_reps, num_genes = 1800, 
                          signal_fun = rpareto, 
-                         signal_params = pareto_params), stringsAsFactors = F),
+                         signal_params = pareto_params.weak), stringsAsFactors = F),
                data.frame(dataset = "cFour", add_signal_repl(cFour, num_reps = num_reps, num_genes = 1800, 
                          signal_fun = rpareto, 
-                         signal_params = pareto_params), stringsAsFactors = F))
+                         signal_params = pareto_params.weak), stringsAsFactors = F))
 
 pall <- rbind(pall,
              data.frame(Selection = "Strong", Prevalence = "10%", thin_lib = F, p10.s.as),
@@ -1991,25 +1993,25 @@ plot_sens_lod(p10.w.as)
 # Strong selection.
 p10.s.tl.as <- rbind(data.frame(dataset = "c903", add_signal_repl(c903, num_reps = num_reps, num_genes = 1800, 
                          signal_fun = rpareto, 
-                         signal_params = pareto_params, thin_library = T), stringsAsFactors = F),
+                         signal_params = pareto_params.strong, thin_library = T), stringsAsFactors = F),
                data.frame(dataset = "cFour", add_signal_repl(cFour, num_reps = num_reps, num_genes = 1800, 
                          signal_fun = rpareto, 
-                         signal_params = pareto_params, thin_library = T), stringsAsFactors = F))
+                         signal_params = pareto_params.strong, thin_library = T), stringsAsFactors = F))
 
 # Moderate selection.
 p10.m.tl.as <- rbind(data.frame(dataset = "c903", add_signal_repl(c903, num_reps = num_reps, num_genes = 1800, 
                          signal_fun = rpareto, 
-                         signal_params = pareto_params, thin_library = T), stringsAsFactors = F),
+                         signal_params = papareto_params.weak, thin_library = T), stringsAsFactors = F),
                data.frame(dataset = "cFour", add_signal_repl(cFour, num_reps = num_reps, num_genes = 1800, 
                          signal_fun = rpareto, 
-                         signal_params = pareto_params, thin_library = T), stringsAsFactors = F))
+                         signal_params = pareto_params.moderate, thin_library = T), stringsAsFactors = F))
 # Weak selection.
 p10.w.tl.as <- rbind(data.frame(dataset = "c903", add_signal_repl(c903, num_reps = num_reps, num_genes = 1800, 
                          signal_fun = rpareto, 
-                         signal_params = pareto_params, thin_library = T), stringsAsFactors = F),
+                         signal_params = pareto_params.weak, thin_library = T), stringsAsFactors = F),
                data.frame(dataset = "cFour", add_signal_repl(cFour, num_reps = num_reps, num_genes = 1800, 
                          signal_fun = rpareto, 
-                         signal_params = pareto_params, thin_library = T), stringsAsFactors = F))
+                         signal_params = pareto_params.weak, thin_library = T), stringsAsFactors = F))
 
 pall <- rbind(pall,
              data.frame(Selection = "Strong", Prevalence = "10%", thin_lib = T, p10.s.tl.as),
@@ -2033,25 +2035,25 @@ plot_sens_lod(p10.w.tl.as)
 # Strong selection.
 p5.s.as <- rbind(data.frame(dataset = "c903", add_signal_repl(c903, num_reps = num_reps, num_genes = 900, 
                          signal_fun = rpareto, 
-                         signal_params = pareto_params), stringsAsFactors = F),
+                         signal_params = pareto_params.strong), stringsAsFactors = F),
                data.frame(dataset = "cFour", add_signal_repl(cFour, num_reps = num_reps, num_genes = 900, 
                          signal_fun = rpareto, 
-                         signal_params = pareto_params), stringsAsFactors = F))
+                         signal_params = pareto_params.strong), stringsAsFactors = F))
 
 # Moderate selection.
 p5.m.as <- rbind(data.frame(dataset = "c903", add_signal_repl(c903, num_reps = num_reps, num_genes = 900, 
                          signal_fun = rpareto, 
-                         signal_params = pareto_params), stringsAsFactors = F),
+                         signal_params = pareto_params.moderate), stringsAsFactors = F),
                data.frame(dataset = "cFour", add_signal_repl(cFour, num_reps = num_reps, num_genes = 900, 
                          signal_fun = rpareto, 
-                         signal_params = pareto_params), stringsAsFactors = F))
+                         signal_params = pareto_params.moderate), stringsAsFactors = F))
 # Weak selection.
 p5.w.as <- rbind(data.frame(dataset = "c903", add_signal_repl(c903, num_reps = num_reps, num_genes = 900, 
                          signal_fun = rpareto, 
-                         signal_params = pareto_params), stringsAsFactors = F),
+                         signal_params = pareto_params.weak), stringsAsFactors = F),
                data.frame(dataset = "cFour", add_signal_repl(cFour, num_reps = num_reps, num_genes = 900, 
                          signal_fun = rpareto, 
-                         signal_params = pareto_params), stringsAsFactors = F))
+                         signal_params = pareto_params.weak), stringsAsFactors = F))
 
 pall <- rbind(pall,
              data.frame(Selection = "Strong", Prevalence = "5%", thin_lib = F, p5.s.as),
@@ -2072,25 +2074,25 @@ plot_sens_lod(p5.w.as)
 # Strong selection.
 p5.s.tl.as <- rbind(data.frame(dataset = "c903", add_signal_repl(c903, num_reps = num_reps, num_genes = 900, 
                          signal_fun = rpareto, 
-                         signal_params = pareto_params, thin_library = T), stringsAsFactors = F),
+                         signal_params = pareto_params.strong, thin_library = T), stringsAsFactors = F),
                data.frame(dataset = "cFour", add_signal_repl(cFour, num_reps = num_reps, num_genes = 900, 
                          signal_fun = rpareto, 
-                         signal_params = pareto_params, thin_library = T), stringsAsFactors = F))
+                         signal_params = pareto_params.strong, thin_library = T), stringsAsFactors = F))
 
 # Moderate selection.
 p5.m.tl.as <- rbind(data.frame(dataset = "c903", add_signal_repl(c903, num_reps = num_reps, num_genes = 900, 
                          signal_fun = rpareto, 
-                         signal_params = pareto_params, thin_library = T), stringsAsFactors = F),
+                         signal_params = pareto_params.moderate, thin_library = T), stringsAsFactors = F),
                data.frame(dataset = "cFour", add_signal_repl(cFour, num_reps = num_reps, num_genes = 900, 
                          signal_fun = rpareto, 
-                         signal_params = pareto_params, thin_library = T), stringsAsFactors = F))
+                         signal_params = pareto_params.moderate, thin_library = T), stringsAsFactors = F))
 # Weak selection.
 p5.w.tl.as <- rbind(data.frame(dataset = "c903", add_signal_repl(c903, num_reps = num_reps, num_genes = 900, 
                          signal_fun = rpareto, 
-                         signal_params = pareto_params, thin_library = T), stringsAsFactors = F),
+                         signal_params = pareto_params.weak, thin_library = T), stringsAsFactors = F),
                data.frame(dataset = "cFour", add_signal_repl(cFour, num_reps = num_reps, num_genes = 900, 
                          signal_fun = rpareto, 
-                         signal_params = pareto_params, thin_library = T), stringsAsFactors = F))
+                         signal_params = pareto_params.weak, thin_library = T), stringsAsFactors = F))
 
 pall <- rbind(pall,
              data.frame(Selection = "Strong", Prevalence = "5%", thin_lib = T, p5.s.tl.as),
@@ -2113,25 +2115,25 @@ plot_sens_lod(p5.w.tl.as)
 # Strong selection.
 p2.5.s.as <- rbind(data.frame(dataset = "c903", add_signal_repl(c903, num_reps = num_reps, num_genes = 450, 
                          signal_fun = rpareto, 
-                         signal_params = pareto_params), stringsAsFactors = F),
+                         signal_params = pareto_params.strong), stringsAsFactors = F),
                data.frame(dataset = "cFour", add_signal_repl(cFour, num_reps = num_reps, num_genes = 450, 
                          signal_fun = rpareto, 
-                         signal_params = pareto_params), stringsAsFactors = F))
+                         signal_params = pareto_params.strong), stringsAsFactors = F))
 
 # Moderate selection.
 p2.5.m.as <- rbind(data.frame(dataset = "c903", add_signal_repl(c903, num_reps = num_reps, num_genes = 450, 
                          signal_fun = rpareto, 
-                         signal_params = pareto_params), stringsAsFactors = F),
+                         signal_params = pareto_params.moderate), stringsAsFactors = F),
                data.frame(dataset = "cFour", add_signal_repl(cFour, num_reps = num_reps, num_genes = 450, 
                          signal_fun = rpareto, 
-                         signal_params = pareto_params), stringsAsFactors = F))
+                         signal_params = pareto_params.moderate), stringsAsFactors = F))
 # Weak selection.
 p2.5.w.as <- rbind(data.frame(dataset = "c903", add_signal_repl(c903, num_reps = num_reps, num_genes = 450, 
                          signal_fun = rpareto, 
-                         signal_params = pareto_params), stringsAsFactors = F),
+                         signal_params = pareto_params.weak), stringsAsFactors = F),
                data.frame(dataset = "cFour", add_signal_repl(cFour, num_reps = num_reps, num_genes = 450, 
                          signal_fun = rpareto, 
-                         signal_params = pareto_params), stringsAsFactors = F))
+                         signal_params = pareto_params.weak), stringsAsFactors = F))
 
 pall <- rbind(pall,
              data.frame(Selection = "Strong", Prevalence = "2.5%", thin_lib = F, p2.5.s.as),
@@ -2152,25 +2154,25 @@ plot_sens_lod(p2.5.w.as)
 # Strong selection.
 p2.5.s.tl.as <- rbind(data.frame(dataset = "c903", add_signal_repl(c903, num_reps = num_reps, num_genes = 450, 
                          signal_fun = rpareto, 
-                         signal_params = pareto_params, thin_library = T), stringsAsFactors = F),
+                         signal_params = pareto_params.strong, thin_library = T), stringsAsFactors = F),
                data.frame(dataset = "cFour", add_signal_repl(cFour, num_reps = num_reps, num_genes = 450, 
                          signal_fun = rpareto, 
-                         signal_params = pareto_params, thin_library = T), stringsAsFactors = F))
+                         signal_params = pareto_params.strong, thin_library = T), stringsAsFactors = F))
 
 # Moderate selection.
 p2.5.m.tl.as <- rbind(data.frame(dataset = "c903", add_signal_repl(c903, num_reps = num_reps, num_genes = 450, 
                          signal_fun = rpareto, 
-                         signal_params = pareto_params, thin_library = T), stringsAsFactors = F),
+                         signal_params = pareto_params.moderate, thin_library = T), stringsAsFactors = F),
                data.frame(dataset = "cFour", add_signal_repl(cFour, num_reps = num_reps, num_genes = 450, 
                          signal_fun = rpareto, 
-                         signal_params = pareto_params, thin_library = T), stringsAsFactors = F))
+                         signal_params = pareto_params.moderate, thin_library = T), stringsAsFactors = F))
 # Weak selection.
 p2.5.w.tl.as <- rbind(data.frame(dataset = "c903", add_signal_repl(c903, num_reps = num_reps, num_genes = 450, 
                          signal_fun = rpareto, 
-                         signal_params = pareto_params, thin_library = T), stringsAsFactors = F),
+                         signal_params = pareto_params.weak, thin_library = T), stringsAsFactors = F),
                data.frame(dataset = "cFour", add_signal_repl(cFour, num_reps = num_reps, num_genes = 450, 
                          signal_fun = rpareto, 
-                         signal_params = pareto_params, thin_library = T), stringsAsFactors = F))
+                         signal_params = pareto_params.weak, thin_library = T), stringsAsFactors = F))
 
 pall <- rbind(pall,
              data.frame(Selection = "Strong", Prevalence = "2.5%", thin_lib = T, p2.5.s.tl.as),
@@ -2194,25 +2196,25 @@ plot_sens_lod(p2.5.w.tl.as)
 # Strong selection.
 p1.s.as <- rbind(data.frame(dataset = "c903", add_signal_repl(c903, num_reps = num_reps, num_genes = 180, 
                          signal_fun = rpareto, 
-                         signal_params = pareto_params), stringsAsFactors = F),
+                         signal_params = pareto_params.strong), stringsAsFactors = F),
                data.frame(dataset = "cFour", add_signal_repl(cFour, num_reps = num_reps, num_genes = 180, 
                          signal_fun = rpareto, 
-                         signal_params = pareto_params), stringsAsFactors = F))
+                         signal_params = pareto_params.strong), stringsAsFactors = F))
 
 # Moderate selection.
 p1.m.as <- rbind(data.frame(dataset = "c903", add_signal_repl(c903, num_reps = num_reps, num_genes = 180, 
                          signal_fun = rpareto, 
-                         signal_params = pareto_params), stringsAsFactors = F),
+                         signal_params = pareto_params.moderate), stringsAsFactors = F),
                data.frame(dataset = "cFour", add_signal_repl(cFour, num_reps = num_reps, num_genes = 180, 
                          signal_fun = rpareto, 
-                         signal_params = pareto_params), stringsAsFactors = F))
+                         signal_params = pareto_params.moderate), stringsAsFactors = F))
 # Weak selection.
 p1.w.as <- rbind(data.frame(dataset = "c903", add_signal_repl(c903, num_reps = num_reps, num_genes = 180, 
                          signal_fun = rpareto, 
-                         signal_params = pareto_params), stringsAsFactors = F),
+                         signal_params = pareto_params.weak), stringsAsFactors = F),
                data.frame(dataset = "cFour", add_signal_repl(cFour, num_reps = num_reps, num_genes = 180, 
                          signal_fun = rpareto, 
-                         signal_params = pareto_params), stringsAsFactors = F))
+                         signal_params = pareto_params.weak), stringsAsFactors = F))
 
 pall <- rbind(pall,
              data.frame(Selection = "Strong", Prevalence = "1%", thin_lib = F, p1.s.as),
@@ -2233,25 +2235,25 @@ plot_sens_lod(p1.w.as)
 # Strong selection.
 p1.s.tl.as <- rbind(data.frame(dataset = "c903", add_signal_repl(c903, num_reps = num_reps, num_genes = 180, 
                          signal_fun = rpareto, 
-                         signal_params = pareto_params, thin_library = T), stringsAsFactors = F),
+                         signal_params = pareto_params.strong, thin_library = T), stringsAsFactors = F),
                data.frame(dataset = "cFour", add_signal_repl(cFour, num_reps = num_reps, num_genes = 180, 
                          signal_fun = rpareto, 
-                         signal_params = pareto_params, thin_library = T), stringsAsFactors = F))
+                         signal_params = pareto_params.strong, thin_library = T), stringsAsFactors = F))
 
 # Moderate selection.
 p1.m.tl.as <- rbind(data.frame(dataset = "c903", add_signal_repl(c903, num_reps = num_reps, num_genes = 180, 
                          signal_fun = rpareto, 
-                         signal_params = pareto_params, thin_library = T), stringsAsFactors = F),
+                         signal_params = pareto_params.moderate, thin_library = T), stringsAsFactors = F),
                data.frame(dataset = "cFour", add_signal_repl(cFour, num_reps = num_reps, num_genes = 180, 
                          signal_fun = rpareto, 
-                         signal_params = pareto_params, thin_library = T), stringsAsFactors = F))
+                         signal_params = pareto_params.moderate, thin_library = T), stringsAsFactors = F))
 # Weak selection.
 p1.w.tl.as <- rbind(data.frame(dataset = "c903", add_signal_repl(c903, num_reps = num_reps, num_genes = 180, 
                          signal_fun = rpareto, 
-                         signal_params = pareto_params, thin_library = T), stringsAsFactors = F),
+                         signal_params = pareto_params.weak, thin_library = T), stringsAsFactors = F),
                data.frame(dataset = "cFour", add_signal_repl(cFour, num_reps = num_reps, num_genes = 180, 
                          signal_fun = rpareto, 
-                         signal_params = pareto_params, thin_library = T), stringsAsFactors = F))
+                         signal_params = pareto_params.weak, thin_library = T), stringsAsFactors = F))
 
 pall <- rbind(pall,
              data.frame(Selection = "Strong", Prevalence = "1%", thin_lib = T, p1.s.tl.as),
@@ -2275,25 +2277,25 @@ plot_sens_lod(p1.w.tl.as)
 # Strong selection.
 p01.s.as <- rbind(data.frame(dataset = "c903", add_signal_repl(c903, num_reps = num_reps, num_genes = 18, 
                          signal_fun = rpareto, 
-                         signal_params = pareto_params), stringsAsFactors = F),
+                         signal_params = pareto_params.strong), stringsAsFactors = F),
                data.frame(dataset = "cFour", add_signal_repl(cFour, num_reps = num_reps, num_genes = 18, 
                          signal_fun = rpareto, 
-                         signal_params = pareto_params), stringsAsFactors = F))
+                         signal_params = pareto_params.strong), stringsAsFactors = F))
 
 # Moderate selection.
 p01.m.as <- rbind(data.frame(dataset = "c903", add_signal_repl(c903, num_reps = num_reps, num_genes = 18, 
                          signal_fun = rpareto, 
-                         signal_params = pareto_params), stringsAsFactors = F),
+                         signal_params = pareto_params.moderate), stringsAsFactors = F),
                data.frame(dataset = "cFour", add_signal_repl(cFour, num_reps = num_reps, num_genes = 18, 
                          signal_fun = rpareto, 
-                         signal_params = pareto_params), stringsAsFactors = F))
+                         signal_params = pareto_params.moderate), stringsAsFactors = F))
 # Weak selection.
 p01.w.as <- rbind(data.frame(dataset = "c903", add_signal_repl(c903, num_reps = num_reps, num_genes = 18, 
                          signal_fun = rpareto, 
-                         signal_params = pareto_params), stringsAsFactors = F),
+                         signal_params = pareto_params.weak), stringsAsFactors = F),
                data.frame(dataset = "cFour", add_signal_repl(cFour, num_reps = num_reps, num_genes = 18, 
                          signal_fun = rpareto, 
-                         signal_params = pareto_params), stringsAsFactors = F))
+                         signal_params = pareto_params.weak), stringsAsFactors = F))
 
 pall <- rbind(pall,
              data.frame(Selection = "Strong", Prevalence = "0.1%", thin_lib = F, p01.s.as),
@@ -2314,25 +2316,25 @@ plot_sens_lod(p01.w.as)
 # Strong selection.
 p01.s.tl.as <- rbind(data.frame(dataset = "c903", add_signal_repl(c903, num_reps = num_reps, num_genes = 18, 
                          signal_fun = rpareto, 
-                         signal_params = pareto_params, thin_library = T), stringsAsFactors = F),
+                         signal_params = pareto_params.strong, thin_library = T), stringsAsFactors = F),
                data.frame(dataset = "cFour", add_signal_repl(cFour, num_reps = num_reps, num_genes = 18, 
                          signal_fun = rpareto, 
-                         signal_params = pareto_params, thin_library = T), stringsAsFactors = F))
+                         signal_params = pareto_params.strong, thin_library = T), stringsAsFactors = F))
 
 # Moderate selection.
 p01.m.tl.as <- rbind(data.frame(dataset = "c903", add_signal_repl(c903, num_reps = num_reps, num_genes = 18, 
                          signal_fun = rpareto, 
-                         signal_params = pareto_params, thin_library = T), stringsAsFactors = F),
+                         signal_params = pareto_params.moderate, thin_library = T), stringsAsFactors = F),
                data.frame(dataset = "cFour", add_signal_repl(cFour, num_reps = num_reps, num_genes = 18, 
                          signal_fun = rpareto, 
-                         signal_params = pareto_params, thin_library = T), stringsAsFactors = F))
+                         signal_params = pareto_params.moderate, thin_library = T), stringsAsFactors = F))
 # Weak selection.
 p01.w.tl.as <- rbind(data.frame(dataset = "c903", add_signal_repl(c903, num_reps = num_reps, num_genes = 18, 
                          signal_fun = rpareto, 
-                         signal_params = pareto_params, thin_library = T), stringsAsFactors = F),
+                         signal_params = pareto_params.weak, thin_library = T), stringsAsFactors = F),
                data.frame(dataset = "cFour", add_signal_repl(cFour, num_reps = num_reps, num_genes = 18, 
                          signal_fun = rpareto, 
-                         signal_params = pareto_params, thin_library = T), stringsAsFactors = F))
+                         signal_params = pareto_params.weak, thin_library = T), stringsAsFactors = F))
 
 pall <- rbind(pall,
              data.frame(Selection = "Strong", Prevalence = "0.1%", thin_lib = T, p01.s.tl.as),
