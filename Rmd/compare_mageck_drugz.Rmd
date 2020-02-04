@@ -2358,7 +2358,10 @@ Relative performance taken as median of log ratio of sensitivity across all `log
 pall <- rbind(readRDS(file="../Rmd/pall.rds") %>%
                 mutate(fc_distr = "Normal"),
               readRDS(file="../Rmd/pall-gamma.rds") %>%
-                mutate(fc_distr = "Gamma")) %>%
+                mutate(fc_distr = "Gamma"),
+              readRDS(file="../Rmd/pall-bimod.rds") %>%
+                dplyr::filter(row_number() < 1921) %>%
+                mutate(fc_distr = "Normal-bimodal")) %>%
   mutate(replicate = rep(1:(n()/16),each=16))
 
 rp <- pall %>%
