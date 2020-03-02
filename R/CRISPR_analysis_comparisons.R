@@ -1,4 +1,4 @@
-#' make_CRISPR_analysis_comparisons
+#' make_CRISPR_comparison_table
 #' 
 #' Create a data frame with all combinations of desired CRISPR sample combinations.
 #' 
@@ -9,7 +9,7 @@
 #' @return A data frame containing all combinations of 2 replicates from the first and second set of samples.
 #' @import combinat combn
 #' @import dplyr mutate select rowwise ungroup
-make_CRISPR_analysis_comparisons <- function(samples_1, samples_2, num_reps = 2){
+make_CRISPR_comparison_table <- function(samples_1, samples_2, num_reps = 2){
   c1 <- unlist(apply(combinat::combn(samples_1, num_reps),2,function(x) paste(x,collapse=".")))
   c2 <- unlist(apply(combinat::combn(samples_2, num_reps),2,function(x) paste(x,collapse=".")))
   ret <- data.frame(samples_2 = rep(c2,3)) %>%
