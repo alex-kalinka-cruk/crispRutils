@@ -1,11 +1,11 @@
 #' make_CRISPR_comparison_table
-#' 
-#' Create a data frame with all combinations of desired CRISPR sample combinations.
-#' 
+#'
+#' Create a data frame with all (two-replicate) combinations of CRISPR samples.
+#'
 #' @param samples_1 First set of samples (e.g. all baseline samples).
 #' @param samples_2 Second set of samples (e.g. all control samples).
 #' @param num_reps The number of replicates to take in each combination.
-#' 
+#'
 #' @return A data frame containing all combinations of 2 replicates from the first and second set of samples.
 #' @import combinat combn
 #' @import dplyr mutate select rowwise ungroup
