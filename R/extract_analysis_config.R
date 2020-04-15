@@ -1,16 +1,16 @@
-#' extract_analysis_config
-#' 
-#' Extract the sample comparisons from an analysis config as part of pre-pipeline checks.
-#' 
+#' extract_config_comparisons
+#'
+#' Extract the sample comparisons from an analysis config as part of pre-pipeline validation checks.
+#'
 #' @param file Path to an analysis config `json`` file.
 #' @param out Either `df`` or `html`. Defaults to `df`.
-#' 
+#'
 #' @return A data frame containing the sample comparisons.
 #' @import dplyr mutate select
 #' @import formattable formattable formatter style
 #' @import jsonlite fromJSON
 #' @import magrittr %>%
-extract_analysis_config <- function(file, out = "df"){
+extract_config_comparisons <- function(file, out = "df"){
   if(!out %in% c("df","html")) stop("'out' must be one of 'df' or 'html")
   if(!file.exists(file)) stop(paste("unable to find",file))
 
@@ -19,7 +19,7 @@ extract_analysis_config <- function(file, out = "df"){
   samps <- jlist$samples %>%
     dplyr::select(slx_id,name,replicate,indexes,label)
   if(out == "df"){
-    return(samps)
+    return(jlist)
   }else{
     formattable(samps, list(
       label = formatter("span",
