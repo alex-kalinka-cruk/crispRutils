@@ -1,5 +1,5 @@
 .get_auc <- function(scores, TP){
-  # Taking all random pairs of TP and FP, what is probability TP have a higher score than FP?
+  # Taking all pairs of TP and FP, what is probability TP have a higher score than FP?
   score_fp <- scores[!TP]
   score_tp <- scores[TP]
   o <- outer(score_tp, score_fp, "-")
@@ -7,13 +7,13 @@
 }
 
 #' calc_AUC
-#' 
-#' Calculates AUC in a data frame containing a 'TP' column.
-#' 
+#'
+#' Calculates AUROC in a data frame containing a 'TP' column.
+#'
 #' @param data A data frame containing a 'TP' column.
 #' @param score_col A character string naming the column to be used as a score column.
 #' @param group A character string naming a column by which to group 'data'. If `NULL` no grouping, defaults to `NULL`.
-#' 
+#'
 #' @return A data frame.
 #' @import dplyr mutate summarise
 #' @import magrittr %<>%
