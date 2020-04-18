@@ -6,7 +6,7 @@
 #' @param score_col A character string naming a column containing a score metric.
 #' @param return A character string indicating what should be returned: if `curve` then the PR curve is added to the data frame, if `auc` then the AUCPrRc value is returned.
 #'
-#' @return A data frame.
+#' @return A data frame or a single numeric value.
 #' @import dplyr mutate filter select
 #' @import PRROC pr.curve
 #' @export
