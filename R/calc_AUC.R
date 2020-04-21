@@ -15,8 +15,8 @@
 #' @param group A character string naming a column by which to group 'data'. If `NULL` no grouping, defaults to `NULL`.
 #'
 #' @return A data frame.
-#' @import dplyr mutate summarise
-#' @import magrittr %<>%
+#' @importFrom dplyr mutate summarise
+#' @importFrom magrittr %<>%
 #' @export
 calc_AUC <- function(data, score_col, group = NULL){
   if(!"TP" %in% colnames(data))

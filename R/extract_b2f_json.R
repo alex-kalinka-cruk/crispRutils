@@ -1,13 +1,13 @@
 #' extract_b2f_json
-#' 
+#'
 #' Extracts flowcell-level QC metrics from the 'Stats.json' output from 'bcl2fastq2'.
-#' 
+#'
 #' @param path A character string giving a path to the 'Stats.json' output from 'bcl2fastq2'.
-#' 
-#' @import dplyr mutate select filter unnest
-#' @import jsonlite fromJSON
+#'
+#' @importFrom tidyr unnest
+#' @importFrom jsonlite fromJSON
 #' @return A data frame
-#' 
+#'
 #' @export
 extract_b2f_json <- function(path){
   ret <- list()
@@ -26,7 +26,7 @@ extract_b2f_json <- function(path){
   # Sample summary stats.
   samps <- all$ConversionResults$DemuxResults[[1]] %>%
     dplyr::mutate(RunId = flowcell$RunId) %>%
-    tidyr::unnest(c(IndexMetrics, ReadMetrics), 
+    tidyr::unnest(c(IndexMetrics, ReadMetrics),
                   names_repair="universal") %>%
     dplyr::mutate(MismatchCounts = MismatchCounts[,1],
                   Index_OneBaseMismatch_percent = 100*(NumberReads-MismatchCounts)/NumberReads,

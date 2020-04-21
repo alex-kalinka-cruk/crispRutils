@@ -1,15 +1,15 @@
 #' calc_glass_delta
-#' 
+#'
 #' Calculates Glass's delta for the log fold change distributions of essential and non-essential genes.
 #'  @param data A data fram containing log fold change data (normalized in terms of library depth and any potential copy-number effects) for a set of genes.
 #'  @param gene_col A character string indicating which column contains gene names.
 #'  @param lfc_col A character string indicating which column contains $log_2$ fold change data for each gene.
 #'  @param essential_genes A vector of essential gene names.
 #'  @param nonessential_genes A vector of non-essential gene names.
-#'  
+#'
 #'  @return A single numeric value.
-#'  @import dplyr filter select mutate summarise
-#'  @import magrittr %<>%
+#'  @importFrom dplyr filter select mutate summarise
+#'  @importFrom magrittr %<>%
 #'  @export
 calc_glass_delta <- function(data, gene_col, lfc_col, essential_genes, nonessential_genes){
   if(!gene_col %in% colnames(data))

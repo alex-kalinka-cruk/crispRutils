@@ -1,13 +1,13 @@
 #' add_ROC
-#' 
+#'
 #' Adds TPR and FPR columns to a data frame containing TP and a score metric (e.g. Bayes factors).
-#' 
+#'
 #' @param data A data frame containing a TP and score column.
 #' @param score_col A character string naming the column to be used as a score column.
-#' 
+#'
 #' @return data frame
-#' @import dplyr arrange desc mutate filter select
-#' @import magrittr %<>%
+#' @importFrom dplyr arrange desc mutate filter select
+#' @importFrom magrittr %<>%
 #' @export
 add_ROC <- function(data, score_col){
   if(!"TP" %in% colnames(data))
