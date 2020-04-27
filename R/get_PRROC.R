@@ -28,7 +28,8 @@ get_PRROC <- function(data, score_col, group_col = NULL, return = "curve"){
   pr <- PRROC::pr.curve(pos_scores, neg_scores, curve = T)
   if(return == "curve"){
     prc <- as.data.frame(pr$curve) %>%
-      dplyr::rename(Recall = V1, Precision = V2, !!sc := V3)
+      dplyr::rename(Recall = V1, Precision = V2, !!sc := V3) %>%
+      dplyr::mutate(AUPrRc = pr$auc.davis.goadrich)
     if(!is.null(group_col))
       prc %<>% mutate(!!sym(group_col) := unlist((data %>% dplyr::select(!!sym(group_col)))[,1])[1])
     return(prc)
