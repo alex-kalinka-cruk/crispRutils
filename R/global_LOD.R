@@ -7,7 +7,6 @@
 #' @param ... A set of data
 #'
 #' @return A numeric value (a log2 fold change).
-#' @export
 global_LOD <- function(bthin_out, type, ...){
   if(class(bthin_out) != "ThinData") stop("'bthin_out' should be an object of class 'ThinData'")
   if(!type %in% c("mageck","drugz")) stop("'type' should be one of 'mageck' or 'drugz'")
