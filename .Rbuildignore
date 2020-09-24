@@ -1,3 +1,5 @@
 ^crispRutils\.Rproj$
 ^\.Rproj\.user$
 ^LICENSE\.md$
+data-extra/*
+tmp/*

@@ -12,14 +12,15 @@
 #' @export
 #' @importFrom dplyr %>% mutate select rowwise ungroup rename
 #' @importFrom magrittr %<>%
-#' @importFrom rlang sym !!
+#' @importFrom rlang sym !! :=
 make_pipeline_cleanr_library_file <- function(file, grna_id_column, seq_column, gene_column, csv = FALSE){
   tryCatch({
     if(!csv){
       data <- read.delim(file, stringsAsFactors = F, strip.white = T)
       data %<>%
         dplyr::rowwise() %>%
-        dplyr::mutate(coords = gsub("^.*?_(ex.*)$","\\1",!!rlang::sym(grna_id_column)),
+        dplyr::mutate(!!rlang::sym(seq_column) := toupper(!!rlang::sym(seq_column)),
+                      coords = gsub("^.*?_(ex.*)$","\\1",!!rlang::sym(grna_id_column)),
                       EXONE = gsub("^ex(\\d+?)_.*$","\\1",coords),
                       CHRM = gsub("^ex\\d+?_(\\d+?):.*$","\\1",coords),
                       STRAND = gsub("^ex\\d+?_\\d+?:\\S+?:(.).*$","\\1",coords),
@@ -32,7 +33,8 @@ make_pipeline_cleanr_library_file <- function(file, grna_id_column, seq_column, 
         dplyr::select(seq, CODE, GENES, EXONE, CHRM, STRAND, STARTpos, ENDpos)
     }else{
       data <- read.csv(file) %>%
-        dplyr::mutate(CHRM = "NA", STARTpos = "NA", ENDpos = "NA") %>%
+        dplyr::mutate(!!rlang::sym(seq_column) := toupper(!!rlang::sym(seq_column)),
+                      CHRM = "NA", STARTpos = "NA", ENDpos = "NA") %>%
         dplyr::select(sequence, !!rlang::sym(grna_id_column), !!rlang::sym(gene_column), target_exon,
                       CHRM, strand, STARTpos, ENDpos) %>%
         dplyr::rename(seq = sequence, CODE = !!rlang::sym(grna_id_column),
