@@ -22,6 +22,14 @@ read_plasmid_samples <- function(dir){
           dplyr::select(gRNA,Gene,Plasmid) %>%
           dplyr::mutate(library = name, batch = "Ong-et-al-2017", count_normalized = 2e7*Plasmid/sum(Plasmid)) %>%
           dplyr::rename(count = Plasmid)
+        # Add GC content from library.
+        if(grepl(name,names(crispr_libs))){
+          lib <- crispr_libs[[grepl(name,names(crispr_libs))]]
+          td %<>%
+            dplyr::mutate(GC_percent = lib$GC_percent[match(gRNA,lib$CODE)])
+        }else{
+          td$GC_percent <- NA
+        }
       }else if(grepl("txt$",file)){
         name <- gsub("^(.*?)_plasmid_counts.txt$","\\1",fn)
         lib <- gsub("^.*?-(.*)$","\\1",name)
@@ -29,6 +37,14 @@ read_plasmid_samples <- function(dir){
         td <- utils::read.delim(file, stringsAsFactors = F, header = F) %>%
           dplyr::mutate(library = lib, batch = batch, count_normalized = 2e7*V3/sum(V3)) %>%
           dplyr::rename(gRNA = V1, Gene = V2, count = V3)
+        # Add GC content from library.
+        if(grepl(name,names(crispr_libs))){
+          lib <- crispr_libs[[grepl(name,names(crispr_libs))]]
+          td %<>%
+            dplyr::mutate(GC_percent = lib$GC_percent[match(gRNA,lib$CODE)])
+        }else{
+          td$GC_percent <- NA
+        }
       }
       ret <- rbind(ret,td)
     }
