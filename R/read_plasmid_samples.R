@@ -18,30 +18,32 @@ read_plasmid_samples <- function(dir){
       fn <- tail(unlist(strsplit(file,"/")),1)
       if(grepl("csv$",file)){
         name <- gsub("^(.*?)_plasmid_counts.csv$","\\1",fn)
+        sname <- gsub("^(.*?)--.*$","\\1",name)
         td <- read.csv(file, stringsAsFactors = F) %>%
           dplyr::select(gRNA,Gene,Plasmid) %>%
           dplyr::mutate(library = name, batch = "Ong-et-al-2017", count_normalized = 2e7*Plasmid/sum(Plasmid)) %>%
           dplyr::rename(count = Plasmid)
         # Add GC content from library.
-        if(grepl(name,names(crispr_libs))){
-          lib <- crispr_libs[[grepl(name,names(crispr_libs))]]
+        if(any(grepl(sname,names(crispr_libs)))){
+          clib <- crispr_libs[[names(crispr_libs)[grepl(sname,names(crispr_libs))]]]
           td %<>%
-            dplyr::mutate(GC_percent = lib$GC_percent[match(gRNA,lib$CODE)])
+            dplyr::mutate(GC_percent = clib$GC_percent[match(gRNA,clib$CODE)])
         }else{
           td$GC_percent <- NA
         }
       }else if(grepl("txt$",file)){
         name <- gsub("^(.*?)_plasmid_counts.txt$","\\1",fn)
         lib <- gsub("^.*?-(.*)$","\\1",name)
+        slib <- gsub("^(.*?)--.*$","\\1",lib)
         batch <- gsub("^(.*?)-.*$","\\1",name)
         td <- utils::read.delim(file, stringsAsFactors = F, header = F) %>%
           dplyr::mutate(library = lib, batch = batch, count_normalized = 2e7*V3/sum(V3)) %>%
           dplyr::rename(gRNA = V1, Gene = V2, count = V3)
         # Add GC content from library.
-        if(grepl(name,names(crispr_libs))){
-          lib <- crispr_libs[[grepl(name,names(crispr_libs))]]
+        if(any(grepl(slib,names(crispr_libs)))){
+          clib <- crispr_libs[[names(crispr_libs)[grepl(slib,names(crispr_libs))]]]
           td %<>%
-            dplyr::mutate(GC_percent = lib$GC_percent[match(gRNA,lib$CODE)])
+            dplyr::mutate(GC_percent = clib$GC_percent[match(gRNA,clib$CODE)])
         }else{
           td$GC_percent <- NA
         }

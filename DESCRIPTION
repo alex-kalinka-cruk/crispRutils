@@ -8,11 +8,13 @@ Authors@R:
            email = "alex.kalinka@cancer.org.uk")
 Description: Tools for working with CRISPR data.
 License: MIT + file LICENSE
-Encoding: UTF-8
-LazyData: true
-Imports: 
-    dplyr,
-    ggplot2
-RoxygenNote: 7.1.0
 Depends: 
     fgcQC
+Imports: 
+    dplyr,
+    energy,
+    ggplot2,
+    moments
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 7.1.0

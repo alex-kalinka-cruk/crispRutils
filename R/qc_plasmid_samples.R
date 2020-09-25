@@ -8,6 +8,7 @@
 #' @export
 #' @importFrom dplyr %>% summarise group_by ungroup n
 #' @importFrom moments skewness
+#' @importFrom energy dcor2d
 qc_plasmid_samples <- function(data){
   tryCatch({
     qc <- data %>%
@@ -16,7 +17,11 @@ qc_plasmid_samples <- function(data){
                        Skewness = moments::skewness(count),
                        Sarles_bimodality = crispRutils::calculate_sarles_bimodality(count),
                        percent_zero_count_guides = 100*sum(count == 0)/dplyr::n(),
-                       percent_less_30_count_guides = 100*sum(count < 30)/dplyr::n()) %>%
+                       percent_less_30_count_guides = 100*sum(count < 30)/dplyr::n(),
+                       distcorr_GC_content_counts = ifelse(!all(is.na(GC_percent)),
+                                                           energy::dcor2d(count[!is.na(GC_percent)],
+                                                                          GC_percent[!is.na(GC_percent)], type="U"),
+                                                           NA)) %>%
       dplyr::ungroup()
   },
   error = function(e) stop(paste("unable to QC plasmid samples:",e))
