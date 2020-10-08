@@ -15,5 +15,5 @@ union_essentials(mageck, bagel)
 An object of class `essential_union`.
 }
 \description{
-Return the union of essentials from objects of class `mageck_gene` and `bagel_gene`.
+Returns the union of essentials called by Mageck and Bagel (from objects of class `mageck_gene` and `bagel_gene`).
 }
