@@ -14,7 +14,7 @@ add_essential_genes(x, mageck_fdr = 0.1, bagel_thresh = NULL)
 \item{bagel_thresh}{A numeric value giving the Bagel Bayes Factor threshold. if `NULL` (default), it's taken from the `bagel_gene` object.}
 }
 \value{
-An object of class `mageck_gene` or `bagel_gene`.
+An object of class `mageck_gene` or `bagel_gene` depending on the class of `x`.
 }
 \description{
 Retrieves lists of essential genes for all comparisons in objects of class `mageck_gene` and `bagel_gene`.

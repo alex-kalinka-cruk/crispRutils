@@ -5,9 +5,9 @@
 #' @param x An object of class `mageck_gene` or `bagel_gene`.
 #' @param mageck_fdr A value between 0 and 1 giving the Mageck FDR cutoff for essentiality. Defaults to 0.1, for 10% FDR.
 #' @param bagel_thresh A numeric value giving the Bagel Bayes Factor threshold. if `NULL` (default), it's taken from the `bagel_gene` object.
-#' @return An object of class `mageck_gene` or `bagel_gene`.
+#' @return An object of class `mageck_gene` or `bagel_gene` depending on the class of `x`.
 #' @export
-#' @importFrom dplyr filter
+#' @importFrom dplyr %>% filter
 add_essential_genes <- function(x, mageck_fdr = 0.1, bagel_thresh = NULL){
   if(!inherits(x,"mageck_gene") && !inherits(x,"bagel_gene"))
     stop(paste("expecting an object of class 'mageck_gene' or 'bagel_gene', got:",class(x)))
