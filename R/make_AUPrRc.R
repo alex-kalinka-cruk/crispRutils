@@ -7,6 +7,7 @@
 #' @return A data frame of AUPrRcs.
 #' @importFrom dplyr group_by summarise ungroup arrange desc
 #' @export
+#' @author Alex T. Kalinka \email{alex.kalinka@@cancer.org.uk}
 make_AUPrRc_df <- function(data){
   tryCatch({
     data_auprrc <- data %>%

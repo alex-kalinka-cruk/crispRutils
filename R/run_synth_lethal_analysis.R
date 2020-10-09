@@ -6,6 +6,7 @@
 #' @return An object of class `synthetic_lethal`.
 #' @export
 #' @importFrom dplyr %>% mutate case_when inner_join rowwise ungroup
+#' @author Alex T. Kalinka \email{alex.kalinka@@cancer.org.uk}
 run_synth_lethal_analysis <- function(path){
   if(!dir.exists(path)) stop(paste("unable to find",path))
   
@@ -28,7 +29,8 @@ run_synth_lethal_analysis <- function(path){
       dplyr::mutate(type = dplyr::case_when(
         (neg.fdr < 0.1 & id %in% new_ess) ~ "Gain-Ess",
         (pos.fdr < 0.1 & id %in% lost_ess) ~ "Loss-Ess",
-        TRUE ~ "Unchanged-Ess"))
+        TRUE ~ "Unchanged-Ess"),
+        `-log10_FDR` = -log10(min(c(neg.fdr, pos.fdr))))
     },
     error = function(e) stop(paste("unable to annotate mageck output with gain and loss of essentiality:",e))
   )
@@ -39,7 +41,7 @@ run_synth_lethal_analysis <- function(path){
       dplyr::inner_join(mageck$Treatment_vs_Plasmid, by = "id", suffix = c(".Control",".Treatment")) %>%
       dplyr::rowwise() %>%
       # For plotting we use the best p-val for each gene's essentiality.
-      dplyr::mutate(FDR = min(c(neg.fdr.Control, neg.fdr.Treatment))) %>%
+      dplyr::mutate(`-log10_FDR` = -log10(min(c(neg.fdr.Control, neg.fdr.Treatment)))) %>%
       dplyr::ungroup()
   },
   error = function(e) stop(paste("unable to join ctrl-plasmid and treat-plasmid mageck output:",e))
@@ -47,7 +49,8 @@ run_synth_lethal_analysis <- function(path){
   
   ret <- list(mageck_res = mageck, bagel_res = bagel, essential_union = ess_union,
               new_essential = new_ess, lost_essential = lost_ess,
-              mageck_ctrl_treat = ctrl_treat_mageck,
-              mageck_treat_ctrl_ess_annot = sleth_mageck)
+              mageck_ctrl_treat_vs_plasmid = ctrl_treat_mageck,
+              mageck_treat_vs_ctrl_ess_annot = sleth_mageck)
+  class(ret) <- "synthetic_lethal"
   return(ret)
 }

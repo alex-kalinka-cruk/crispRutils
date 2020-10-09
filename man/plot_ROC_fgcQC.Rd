@@ -19,3 +19,6 @@ A ROC plot for sets of genes.
 \description{
 Plot ROC curves for sets of essential genes.
 }
+\author{
+Alex T. Kalinka \email{alex.kalinka@cancer.org.uk}
+}

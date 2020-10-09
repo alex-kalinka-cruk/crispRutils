@@ -7,6 +7,7 @@
 #' @return A numeric value.
 #' @export
 #' @importFrom moments skewness kurtosis
+#' @author Alex T. Kalinka \email{alex.kalinka@@cancer.org.uk}
 calculate_sarles_bimodality <- function(data){
   tryCatch({
     return((moments::skewness(data)^2+1)/moments::kurtosis(data))

@@ -9,6 +9,7 @@
 #' @return A ROC plot for sets of genes.
 #' @importFrom ggplot2 ggplot aes geom_line geom_hline ggtitle
 #' @export
+#' @author Alex T. Kalinka \email{alex.kalinka@@cancer.org.uk}
 plot_PrRc_fgcQC <- function(data, title, print_auprrc = TRUE){
   tryCatch({
     pl <- ggplot2::ggplot(data, ggplot2::aes(Recall, Precision, color = gene_set)) +

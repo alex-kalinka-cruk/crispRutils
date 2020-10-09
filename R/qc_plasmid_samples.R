@@ -10,6 +10,7 @@
 #' @importFrom moments skewness
 #' @importFrom energy dcor2d
 #' @importFrom stats median mad
+#' @author Alex T. Kalinka \email{alex.kalinka@@cancer.org.uk}
 qc_plasmid_samples <- function(data){
   tryCatch({
     qc <- data %>%

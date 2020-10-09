@@ -17,3 +17,6 @@ An object of class `bagel_gene`.
 \description{
 Reads in all Bagel gene-level results (`*.bf`) for a single screen put through the AZ-CRUK CRISPR pipeline.
 }
+\author{
+Alex T. Kalinka \email{alex.kalinka@cancer.org.uk}
+}

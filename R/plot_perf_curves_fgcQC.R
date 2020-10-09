@@ -7,6 +7,7 @@
 #'
 #' @return A ROC or Precision-Recall curve for sets of essential genes.
 #' @export
+#' @author Alex T. Kalinka \email{alex.kalinka@@cancer.org.uk}
 plot_perf_curves_fgcQC <- function(qc_fgcQC, type){
   if(!inherits(qc_fgcQC,"fgcQC"))
     stop(paste("expecting input to be an object of class 'fgcQC', got an object of class:",class(qc_fgcQC)))

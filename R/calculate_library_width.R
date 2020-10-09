@@ -7,6 +7,7 @@
 #' @return A numeric value.
 #' @export
 #' @importFrom stats quantile
+#' @author Alex T. Kalinka \email{alex.kalinka@@cancer.org.uk}
 #' @md
 #' @references
 #' * Imkeller, K. et al. 2020. gscreend: modelling asymmetric count ratios in CRISPR screens to decrease experiment size and improve phenotype detection. *Genome Biol* **21**, 53.

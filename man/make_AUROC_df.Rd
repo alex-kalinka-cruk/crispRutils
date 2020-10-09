@@ -15,3 +15,6 @@ A data frame of AUROCs.
 \description{
 Makes an AUROC data frame.
 }
+\author{
+Alex T. Kalinka \email{alex.kalinka@cancer.org.uk}
+}

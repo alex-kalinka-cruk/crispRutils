@@ -15,3 +15,6 @@ A data frame of summary QC metrics.
 \description{
 Calculates several QC metrics for sequenced plasmid sample counts.
 }
+\author{
+Alex T. Kalinka \email{alex.kalinka@cancer.org.uk}
+}

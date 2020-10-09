@@ -15,3 +15,6 @@ An object of class `mageck_gene`.
 \description{
 Reads in all Mageck gene-level results (`*gene_summary.txt`) for a single screen put through the AZ-CRUK CRISPR pipeline.
 }
+\author{
+Alex T. Kalinka \email{alex.kalinka@cancer.org.uk}
+}

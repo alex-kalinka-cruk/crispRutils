@@ -9,13 +9,16 @@ add_essential_genes(x, mageck_fdr = 0.1, bagel_thresh = NULL)
 \arguments{
 \item{x}{An object of class `mageck_gene` or `bagel_gene`.}
 
-\item{mageck_fdr}{A value between 0 and 1 giving the Mageck FDR cutoff for essentiality. Defaults to 0.1, for 10% FDR.}
+\item{mageck_fdr}{A value between 0 and 1 giving the Mageck FDR cutoff for essentiality. Defaults to 0.1, for 10 percent FDR.}
 
 \item{bagel_thresh}{A numeric value giving the Bagel Bayes Factor threshold. if `NULL` (default), it's taken from the `bagel_gene` object.}
 }
 \value{
-An object of class `mageck_gene` or `bagel_gene` depending on the class of `x`.
+An object of class `mageck_gene` or `bagel_gene` depending on the class of input argument `x`.
 }
 \description{
 Retrieves lists of essential genes for all comparisons in objects of class `mageck_gene` and `bagel_gene`.
+}
+\author{
+Alex T. Kalinka \email{alex.kalinka@cancer.org.uk}
 }

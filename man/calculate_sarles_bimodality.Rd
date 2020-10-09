@@ -15,3 +15,6 @@ A numeric value.
 \description{
 Calculates Sarle's bimodality metric, which provides a measure of a skewness when the given distribution is unimodal.
 }
+\author{
+Alex T. Kalinka \email{alex.kalinka@cancer.org.uk}
+}

@@ -13,6 +13,7 @@
 #' @importFrom dplyr %>% mutate select rowwise ungroup rename
 #' @importFrom magrittr %<>%
 #' @importFrom rlang sym !! :=
+#' @author Alex T. Kalinka \email{alex.kalinka@@cancer.org.uk}
 make_pipeline_cleanr_library_file <- function(file, grna_id_column, seq_column, gene_column, csv = FALSE){
   tryCatch({
     if(!csv){

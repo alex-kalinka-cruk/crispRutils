@@ -15,3 +15,6 @@ A data frame of AUPrRcs.
 \description{
 Makes an AUPrRc data frame.
 }
+\author{
+Alex T. Kalinka \email{alex.kalinka@cancer.org.uk}
+}

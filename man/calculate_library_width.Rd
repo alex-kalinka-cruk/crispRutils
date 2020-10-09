@@ -20,3 +20,6 @@ Calculates the library width of a plasmid sample, as defined in Imkeller et al. 
 \item Imkeller, K. et al. 2020. gscreend: modelling asymmetric count ratios in CRISPR screens to decrease experiment size and improve phenotype detection. \emph{Genome Biol} \strong{21}, 53.
 }
 }
+\author{
+Alex T. Kalinka \email{alex.kalinka@cancer.org.uk}
+}

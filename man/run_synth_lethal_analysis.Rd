@@ -15,3 +15,6 @@ An object of class `synthetic_lethal`.
 \description{
 Performs a synthetic-lethal analysis for a single screen in which a genetically modified (GM; usually a gene knock-out) isogenic cell line is compared to the unmodified parental line: the GM line is considered a 'treatment' and the parental line is the 'control' arm (as in a drug-interaction screen).
 }
+\author{
+Alex T. Kalinka \email{alex.kalinka@cancer.org.uk}
+}

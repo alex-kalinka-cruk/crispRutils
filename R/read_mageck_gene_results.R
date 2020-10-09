@@ -6,6 +6,7 @@
 #' @return An object of class `mageck_gene`.
 #' @export
 #' @importFrom rlang sym
+#' @author Alex T. Kalinka \email{alex.kalinka@@cancer.org.uk}
 read_mageck_gene_results <- function(path){
   tryCatch({
     files <- list.files(path, recursive = T, full.names = T, pattern = "gene_summary.txt$")

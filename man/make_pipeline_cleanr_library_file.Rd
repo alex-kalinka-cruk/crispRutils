@@ -29,3 +29,6 @@ A data frame.
 \description{
 Prepares a 'cleanr' library file (to be compatible with the AZ-CRUK CRISPR pipeline) from either an sgRNA sequence file in which genomic co-ordinates are encoded in sgRNA IDs, or a csv file format used for TechDev benchmarking libraries.
 }
+\author{
+Alex T. Kalinka \email{alex.kalinka@cancer.org.uk}
+}

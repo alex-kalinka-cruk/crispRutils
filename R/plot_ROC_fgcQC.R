@@ -9,6 +9,7 @@
 #' @return A ROC plot for sets of genes.
 #' @importFrom ggplot2 ggplot aes geom_line geom_abline ggtitle
 #' @export
+#' @author Alex T. Kalinka \email{alex.kalinka@@cancer.org.uk}
 plot_ROC_fgcQC <- function(data, title, print_auroc = TRUE){
   tryCatch({
     pl <- ggplot2::ggplot(data, ggplot2::aes(False_Positive_Rate, True_Positive_Rate, color = gene_set)) +

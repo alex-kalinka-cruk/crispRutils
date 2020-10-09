@@ -7,6 +7,7 @@
 #' @return A data frame of AUROCs.
 #' @importFrom dplyr mutate rename arrange %>%
 #' @export
+#' @author Alex T. Kalinka \email{alex.kalinka@@cancer.org.uk}
 make_AUROC_df <- function(data){
   tryCatch({
     data_auroc <- data %>%

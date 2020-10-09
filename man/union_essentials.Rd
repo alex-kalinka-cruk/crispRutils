@@ -17,3 +17,6 @@ An object of class `essential_union`.
 \description{
 Returns the union of essentials called by Mageck and Bagel (from objects of class `mageck_gene` and `bagel_gene`).
 }
+\author{
+Alex T. Kalinka \email{alex.kalinka@cancer.org.uk}
+}

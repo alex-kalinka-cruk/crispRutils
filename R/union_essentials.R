@@ -6,6 +6,7 @@
 #' @param bagel An object of class `bagel_gene`.
 #' @return An object of class `essential_union`.
 #' @export
+#' @author Alex T. Kalinka \email{alex.kalinka@@cancer.org.uk}
 union_essentials <- function(mageck, bagel){
   if(!inherits(mageck,"mageck_gene")) stop(paste("expecting an object of class 'mageck_gene', got:",class(mageck)))
   if(!inherits(bagel,"bagel_gene")) stop(paste("expecting an object of class 'bagel_gene', got:",class(bagel)))

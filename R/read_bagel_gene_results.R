@@ -7,6 +7,7 @@
 #' @return An object of class `bagel_gene`.
 #' @export
 #' @importFrom rlang sym
+#' @author Alex T. Kalinka \email{alex.kalinka@@cancer.org.uk}
 read_bagel_gene_results <- function(path, ess_thresh){
   if(!ess_thresh %in% c("orig","fgcQC")) 
     stop(paste("expecting 'ess_thresh' to be either 'orig' or 'fgcQC', got:",ess_thresh))

@@ -17,3 +17,6 @@ A ROC or Precision-Recall curve for sets of essential genes.
 \description{
 Plots a ROC or Precision-Recall curve for sets of essential genes taking the `fgcQC` output R object as input.
 }
+\author{
+Alex T. Kalinka \email{alex.kalinka@cancer.org.uk}
+}
