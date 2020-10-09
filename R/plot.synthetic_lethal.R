@@ -37,25 +37,25 @@
   }
   
   volc <- data %>%
-    ggplot2::ggplot(ggplot2::aes(logFC,`-log10_FDR`)) +
+    ggplot2::ggplot(ggplot2::aes(log2FC,`-log10_FDR`)) +
     ggplot2::geom_point() +
-    ggtitle(paste("logFC(Treatment/Control):",screen_name))
+    ggtitle("logFC(Treatment/Control)")
   
   if("Gain-Ess" %in% data$type){
     volc <- volc +
       ggplot2::geom_point(data = data %>%
                    dplyr::filter(type == "Gain-Ess"),
-                 ggplot2::aes(logFC,`-log10_FDR`, color = "Gain-Ess")) +
+                 ggplot2::aes(log2FC,`-log10_FDR`, color = "Gain-Ess")) +
       ggplot2::geom_text(data = data %>% 
                   dplyr::filter(type == "Gain-Ess"),
-                ggplot2::aes(logFC, `-log10_FDR`, label = id, hjust = 0, vjust = 0))
+                ggplot2::aes(log2FC, `-log10_FDR`, label = id, hjust = 0, vjust = 0))
   }
   
   if("Loss-Ess" %in% data$type){
     volc <- volc + 
       ggplot2::geom_point(data = data %>%
                             dplyr::filter(type == "Loss-Ess"),
-                          ggplot2::aes(logFC,`-log10_FDR`, color = "Loss-Ess"))
+                          ggplot2::aes(log2FC,`-log10_FDR`, color = "Loss-Ess"))
   }
   
   print(volc)
@@ -105,9 +105,9 @@ plot.synthetic_lethal <- function(x, type, remove_multimappers,
                    dplyr::filter(type == "Loss-Ess"))$id, multimappers)
     
     if(length(new_ess_M) > 0)
-      warning(paste("the following multi-mapping genes are in the 'Gain-Ess' group:\n",paste(new_ess_M, collapse=", ")))
+      cat(paste("the following genes with multi-mapping gRNAs are in the 'Gain-Ess' group:\n",paste(new_ess_M, collapse=", ")))
     if(length(lost_ess_M) > 0)
-      warning(paste("the following multi-mapping genes are in the 'Loss-Ess' group:\n",paste(lost_ess_M, collapse=", ")))
+      cat(paste("the following genes with multi-mapping gRNAs are in the 'Loss-Ess' group:\n",paste(lost_ess_M, collapse=", ")))
   }else{
     multimappers <- NULL
   }

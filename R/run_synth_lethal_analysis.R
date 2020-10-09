@@ -13,7 +13,7 @@ run_synth_lethal_analysis <- function(path){
   # 1. Read in Mageck and Bagel gene-level results and extract essential genes.
   mageck <- crispRutils::read_mageck_gene_results(path) %>%
     crispRutils::add_essential_genes()
-  bagel <- crispRutils::read_bagel_gene_results(path) %>%
+  bagel <- crispRutils::read_bagel_gene_results(path, ess_thresh = "fgcQC") %>%
     crispRutils::add_essential_genes()
   
   # 2. Find the union of Mageck and Bagel essential genes.
@@ -25,12 +25,16 @@ run_synth_lethal_analysis <- function(path){
   
   # 4. Annotate treat-ctrl mageck output with new and lost ess genes.
   tryCatch({
-    sleth_mageck <- mageck$Treatment_vs_Plasmid %>%
+    sleth_mageck <- mageck$Treatment_vs_Control %>%
+      dplyr::rowwise() %>%
       dplyr::mutate(type = dplyr::case_when(
         (neg.fdr < 0.1 & id %in% new_ess) ~ "Gain-Ess",
         (pos.fdr < 0.1 & id %in% lost_ess) ~ "Loss-Ess",
         TRUE ~ "Unchanged-Ess"),
-        `-log10_FDR` = -log10(min(c(neg.fdr, pos.fdr))))
+        `-log10_FDR` = -log10(min(c(neg.fdr, pos.fdr))),
+        # For plotting (neg.lfc and pos.lfc are equal).
+        log2FC = neg.lfc) %>%
+      dplyr::ungroup()
     },
     error = function(e) stop(paste("unable to annotate mageck output with gain and loss of essentiality:",e))
   )
