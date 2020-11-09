@@ -8,6 +8,7 @@
 #' @importFrom rlang sym
 #' @author Alex T. Kalinka \email{alex.kalinka@@cancer.org.uk}
 read_mageck_gene_results <- function(path){
+  if(!dir.exists(path)) stop(paste("unable to find",path))
   tryCatch({
     files <- list.files(path, recursive = T, full.names = T, pattern = "gene_summary.txt$")
     ret <- list(essential_genes = NA)

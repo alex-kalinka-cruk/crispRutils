@@ -8,6 +8,7 @@
   x,
   type,
   remove_multimappers,
+  label_hits = TRUE,
   library_name = NULL,
   library_type = NULL,
   library_annotation_version = NULL,
@@ -20,6 +21,8 @@
 \item{type}{Either `plasmid` or `treat`.}
 
 \item{remove_multimappers}{Logical, whether to remove genes that have at least 1 guide that is a multi-mapper. Issues a warning if any of the genes appear in the new or lost essential groups.}
+
+\item{label_hits}{Logical, whether to add gene names to plot, or simply colour them. Defaults to `TRUE`.}
 
 \item{library_name}{Name of the library, e.g. "yusa_v3_human" - must match naming conventions used in the AZ-CRUK reference data repo.}
 

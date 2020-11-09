@@ -1,7 +1,7 @@
 # Helper functions.
 
 # LogFC scatterplot for Treatment-vs-Plasmid vs Control-vs-Plasmid.
-.plot_plasmid_fc <- function(x, multimappers){
+.plot_plasmid_fc <- function(x, multimappers, label){
   data <- x$mageck_ctrl_treat_vs_plasmid
   if(!is.null(multimappers)){
     # Remove multi-mappers and controls from the plot.
@@ -19,16 +19,24 @@
   if("Gain-Ess" %in% x$mageck_treat_vs_ctrl_ess_annot$type){
     new_ess <- (x$mageck_treat_vs_ctrl_ess_annot %>%
                   dplyr::filter(type == "Gain-Ess"))$id
-    paired <- paired +
-      ggplot2::geom_text(data = data %>% 
-                  dplyr::filter(id %in% new_ess),
-                ggplot2::aes(neg.lfc.Control, neg.lfc.Treatment, label = id, hjust=0, vjust=0))
+    if(label){
+      paired <- paired +
+        ggplot2::geom_text(data = data %>% 
+                             dplyr::filter(id %in% new_ess),
+                           ggplot2::aes(neg.lfc.Control, neg.lfc.Treatment, label = id, hjust=0, vjust=0))
+    }else{
+      paired <- paired +
+        ggplot2::geom_point(data = data %>% 
+                              dplyr::filter(id %in% new_ess),
+                            ggplot2::aes(neg.lfc.Control, neg.lfc.Treatment, fill = "Gain-Ess"),
+                            pch = 21, color = "NA")
+    }
   }
   print(paired)
 }
 
 # Volcano plot for Treatment-vs-Control.
-.plot_treatment_volcano <- function(x, multimappers){
+.plot_treatment_volcano <- function(x, multimappers, label){
   data <- x$mageck_treat_vs_ctrl_ess_annot
   if(!is.null(multimappers)){
     # Remove multi-mappers and controls from the plot.
@@ -45,10 +53,13 @@
     volc <- volc +
       ggplot2::geom_point(data = data %>%
                    dplyr::filter(type == "Gain-Ess"),
-                 ggplot2::aes(log2FC,`-log10_FDR`, color = "Gain-Ess")) +
-      ggplot2::geom_text(data = data %>% 
+                 ggplot2::aes(log2FC,`-log10_FDR`, color = "Gain-Ess"))
+    if(label){
+      volc <- volc +
+        ggplot2::geom_text(data = data %>% 
                   dplyr::filter(type == "Gain-Ess"),
                 ggplot2::aes(log2FC, `-log10_FDR`, label = id, hjust = 0, vjust = 0))
+    }
   }
   
   if("Loss-Ess" %in% data$type){
@@ -69,6 +80,7 @@
 #' @param x An object of class `synthetic_lethal`.
 #' @param type Either `plasmid` or `treat`.
 #' @param remove_multimappers Logical, whether to remove genes that have at least 1 guide that is a multi-mapper. Issues a warning if any of the genes appear in the new or lost essential groups.
+#' @param label_hits Logical, whether to add gene names to plot, or simply colour them. Defaults to `TRUE`.
 #' @param library_name Name of the library, e.g. "yusa_v3_human" - must match naming conventions used in the AZ-CRUK reference data repo.
 #' @param library_type One of "n" (knock-out), "a" (activation), or "i" (interference).
 #' @param library_annotation_version An integer giving the annotation version of the library.
@@ -80,6 +92,7 @@
 #' @importFrom magrittr %<>%
 #' @author Alex T. Kalinka \email{alex.kalinka@@cancer.org.uk}
 plot.synthetic_lethal <- function(x, type, remove_multimappers, 
+                                  label_hits = TRUE,
                                   library_name = NULL, library_type = NULL,
                                   library_annotation_version = NULL, ...){
   if(!inherits(x,"synthetic_lethal")) stop(paste("expecting object of class 'synthetic_lethal', got:",class(x)))
@@ -113,7 +126,7 @@ plot.synthetic_lethal <- function(x, type, remove_multimappers,
   }
   
   switch(type,
-         plasmid = .plot_plasmid_fc(x, multimappers),
-         treat = .plot_treatment_volcano(x, multimappers)
+         plasmid = .plot_plasmid_fc(x, multimappers, label_hits),
+         treat = .plot_treatment_volcano(x, multimappers, label_hits)
          )
 }
