@@ -36,7 +36,7 @@ join_desirability_scores <- function(..., names, type){
   if(!type %in% c("neg","pos")) stop(paste("expecting 'type' to be either 'neg' or 'pos', got:",type))
   names(input) <- names
   tryCatch({
-    ret <- .inner_join_desir(input)
+    ret <- .inner_join_desir(input, type)
   },
   error = function(e) stop(paste("unable to join desirability score data frames:",e))
   )

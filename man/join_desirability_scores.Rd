@@ -17,7 +17,7 @@ join_desirability_scores(..., names, type)
 An object of class `desirability`.
 }
 \description{
-Joins desirability scores (from the AZ-CRUK CRISPR analysis pipeline) across 2 or more screens.
+Performs inner join of desirability scores (from the AZ-CRUK CRISPR analysis pipeline) across 2 or more screens.
 }
 \author{
 Alex T. Kalinka \email{alex.kalinka@cancer.org.uk}
