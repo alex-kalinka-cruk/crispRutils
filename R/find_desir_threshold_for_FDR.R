@@ -16,9 +16,9 @@
 #' 
 #' @param data A data frame of Desirability scores produced by `crispRutils::join_desirability_scores`.
 #' @param start_desir A numeric value giving the desirability value to start at.
-#' @param stop_desir A numeric value giving the desirability value to finish at.
+#' @param stop_desir A numeric value giving the desirability value to finish at. If `NULL` then `fdr_thresh` is used for stopping. Defaults to `NULL`.
 #' @param fdr_thresh A numeric value giving the FDR threshold to aim for. Defaults to 0.1 (10% FDR).
-#' @param step_size A numeric value giving the step size for sliding from the start to finish Desirability thresholds. Defaults to 0.05.
+#' @param step_size A numeric value giving the step size for sliding from the start to finish Desirability thresholds. Defaults to 0.1.
 #' 
 #' @return A data frame of FDR estimates at each Desirability threshold.
 #' @importFrom dplyr %>% mutate across rowwise ungroup filter
@@ -27,7 +27,7 @@
 #' @export
 #' @md
 #' @author Alex T. Kalinka \email{alex.kalinka@@cancer.org.uk}
-find_desir_threshold_for_FDR <- function(data, start_desir, stop_desir, fdr_thresh = 0.1, step_size = 0.05){
+find_desir_threshold_for_FDR <- function(data, start_desir, stop_desir = NULL, fdr_thresh = 0.1, step_size = 0.1){
   tryCatch({
     desir_thresh <- start_desir
     finish <- FALSE

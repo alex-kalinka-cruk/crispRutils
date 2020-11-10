@@ -1,6 +1,6 @@
 Package: crispRutils
 Title: Tools for working with CRISPR data.
-Version: 0.1.0
+Version: 0.1.1
 Authors@R: 
     person(given = "Alex",
            family = "Kalinka",
@@ -16,6 +16,7 @@ Imports:
     energy,
     ggplot2,
     moments,
+    perept,
     rlang
 Encoding: UTF-8
 LazyData: true

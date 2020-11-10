@@ -7,9 +7,9 @@
 find_desir_threshold_for_FDR(
   data,
   start_desir,
-  stop_desir,
+  stop_desir = NULL,
   fdr_thresh = 0.1,
-  step_size = 0.05
+  step_size = 0.1
 )
 }
 \arguments{
@@ -17,11 +17,11 @@ find_desir_threshold_for_FDR(
 
 \item{start_desir}{A numeric value giving the desirability value to start at.}
 
-\item{stop_desir}{A numeric value giving the desirability value to finish at.}
+\item{stop_desir}{A numeric value giving the desirability value to finish at. If \code{NULL} then \code{fdr_thresh} is used for stopping. Defaults to \code{NULL}.}
 
 \item{fdr_thresh}{A numeric value giving the FDR threshold to aim for. Defaults to 0.1 (10\% FDR).}
 
-\item{step_size}{A numeric value giving the step size for sliding from the start to finish Desirability thresholds. Defaults to 0.05.}
+\item{step_size}{A numeric value giving the step size for sliding from the start to finish Desirability thresholds. Defaults to 0.1.}
 }
 \value{
 A data frame of FDR estimates at each Desirability threshold.
